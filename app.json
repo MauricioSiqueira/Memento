@@ -32,6 +32,14 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O Memento precisa acessar suas fotos para você escolher uma imagem de perfil.",
+          "cameraPermission": "O Memento precisa acessar a câmera para você tirar uma foto de perfil.",
+          "microphonePermission": false
+        }
       ]
     ],
     "experiments": {

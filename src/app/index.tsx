@@ -2,12 +2,12 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
+import { Link, router } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
-import { Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { SocialButton } from '@/components/ui/SocialButton';
 
 export default function TelaInicial() {
   const { width: largura } = useWindowDimensions();
@@ -25,37 +25,40 @@ export default function TelaInicial() {
         </Svg>
       </View>
 
-      <KeyboardAvoidingView 
-        style={estilos.tecladoContainer} 
+      <KeyboardAvoidingView
+        style={estilos.tecladoContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={estilos.conteudoPrincipal}>
-          
+
           {/* Seção Gráfica do Cabeçalho */}
           <View style={estilos.graficosCabecalho}>
             {/* Polaroid Esquerda */}
             <View style={[estilos.polaroid, estilos.polaroidEsquerda]}>
-              <Image 
-                source="https://picsum.photos/seed/sunset/200/250" 
-                style={estilos.imagemPolaroid} 
+              <Image
+                source="https://picsum.photos/seed/sunset/200/250"
+                style={estilos.imagemPolaroid}
                 contentFit="cover"
               />
+              <Text style={estilos.florEsquerda}>🌸</Text>
             </View>
-            
+
             {/* Polaroid Direita */}
             <View style={[estilos.polaroid, estilos.polaroidDireita]}>
-              <Image 
-                source="https://picsum.photos/seed/field/200/250" 
-                style={estilos.imagemPolaroid} 
+              <View style={estilos.fitaWashi} />
+              <Image
+                source="https://picsum.photos/seed/field/200/250"
+                style={estilos.imagemPolaroid}
                 contentFit="cover"
               />
+              <Text style={estilos.florDireita}>🌸</Text>
             </View>
 
             {/* Nuvem e Coração Central */}
             <View style={estilos.containerLogo}>
-              <Feather name="cloud" size={80} color="#4A3A35" />
+              <Ionicons name="cloud-outline" size={100} color="#4A3A35" />
               <View style={estilos.containerCoracao}>
-                <Feather name="heart" size={32} color="#F29CBA" />
+                <Ionicons name="heart-outline" size={38} color="#F29CBA" />
               </View>
             </View>
           </View>
@@ -70,40 +73,35 @@ export default function TelaInicial() {
 
           {/* Cartão do Formulário */}
           <View style={estilos.cartao}>
-            <Input 
+            <Input
               iconName="mail"
               placeholder="E-mail"
               keyboardType="email-address"
               autoCapitalize="none"
             />
-            <Input 
+            <Input
               iconName="lock"
               placeholder="Senha"
               isPassword
             />
-            
+
             <TouchableOpacity style={estilos.containerEsqueceuSenha}>
               <Text style={estilos.textoEsqueceuSenha}>Esqueceu sua senha?</Text>
             </TouchableOpacity>
 
-            <Button title="Entrar" style={estilos.botaoEntrar} />
-
-            <View style={estilos.containerDivisor}>
-              <View style={estilos.divisor} />
-              <Text style={estilos.textoDivisor}>ou entre com</Text>
-              <View style={estilos.divisor} />
-            </View>
-
-            <View style={estilos.containerBotoesSociais}>
-              <SocialButton title="Google" iconName="google" style={estilos.botaoSocialEsq} />
-              <SocialButton title="Apple" iconName="apple1" style={estilos.botaoSocialDir} />
-            </View>
+            <Button
+              title="Entrar"
+              style={estilos.botaoEntrar}
+              onPress={() => router.replace('/home')}
+            />
 
             <View style={estilos.containerRodape}>
               <Text style={estilos.textoRodape}>Ainda não tem uma conta? </Text>
-              <TouchableOpacity>
-                <Text style={estilos.acaoRodape}>Criar conta</Text>
-              </TouchableOpacity>
+              <Link href="/criar-conta" asChild>
+                <TouchableOpacity>
+                  <Text style={estilos.acaoRodape}>Criar conta</Text>
+                </TouchableOpacity>
+              </Link>
             </View>
           </View>
 
@@ -162,6 +160,29 @@ const estilos = StyleSheet.create({
     width: 90,
     height: 110,
   },
+  florEsquerda: {
+    position: 'absolute',
+    bottom: -10,
+    left: -14,
+    fontSize: 28,
+  },
+  florDireita: {
+    position: 'absolute',
+    bottom: -6,
+    right: -10,
+    fontSize: 28,
+  },
+  fitaWashi: {
+    position: 'absolute',
+    top: -10,
+    right: 10,
+    width: 28,
+    height: 16,
+    backgroundColor: '#F6BFCF',
+    opacity: 0.85,
+    transform: [{ rotate: '30deg' }],
+    zIndex: 2,
+  },
   containerLogo: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -170,7 +191,10 @@ const estilos = StyleSheet.create({
   },
   containerCoracao: {
     position: 'absolute',
-    top: 35,
+    top: 44,
+    backgroundColor: '#FAF5F2',
+    borderRadius: 20,
+    padding: 4,
   },
   containerTexto: {
     alignItems: 'center',
@@ -214,32 +238,6 @@ const estilos = StyleSheet.create({
   },
   botaoEntrar: {
     marginBottom: 24,
-  },
-  containerDivisor: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  divisor: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#EFEAE7',
-  },
-  textoDivisor: {
-    color: '#8A7A75',
-    paddingHorizontal: 16,
-    fontSize: 14,
-  },
-  containerBotoesSociais: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-  },
-  botaoSocialEsq: {
-    marginRight: 8,
-  },
-  botaoSocialDir: {
-    marginLeft: 8,
   },
   containerRodape: {
     flexDirection: 'row',
