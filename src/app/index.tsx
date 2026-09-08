@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import Svg, { Path } from 'react-native-svg';
@@ -13,89 +13,10 @@ export default function TelaInicial() {
   const { width: largura } = useWindowDimensions();
 
   return (
-    <SafeAreaView style={estilos.container} edges={['top']}>
-      <ScrollView contentContainerStyle={estilos.conteudoScroll} showsVerticalScrollIndicator={false}>
-        
-        {/* Seção Gráfica do Cabeçalho */}
-        <View style={estilos.graficosCabecalho}>
-          {/* Polaroid Esquerda */}
-          <View style={[estilos.polaroid, estilos.polaroidEsquerda]}>
-            <Image 
-              source="https://picsum.photos/seed/sunset/200/250" 
-              style={estilos.imagemPolaroid} 
-              contentFit="cover"
-            />
-          </View>
-          
-          {/* Polaroid Direita */}
-          <View style={[estilos.polaroid, estilos.polaroidDireita]}>
-            <Image 
-              source="https://picsum.photos/seed/field/200/250" 
-              style={estilos.imagemPolaroid} 
-              contentFit="cover"
-            />
-          </View>
-
-          {/* Nuvem e Coração Central */}
-          <View style={estilos.containerLogo}>
-            <Feather name="cloud" size={80} color="#4A3A35" />
-            <View style={estilos.containerCoracao}>
-              <Feather name="heart" size={32} color="#F29CBA" />
-            </View>
-          </View>
-        </View>
-
-        {/* Textos */}
-        <View style={estilos.containerTexto}>
-          <Text style={estilos.titulo}>Guarde o que importa.</Text>
-          <Text style={estilos.subtitulo}>
-            Compartilhe momentos. Crie <Text style={estilos.destaqueSubtitulo}>memórias.</Text>
-          </Text>
-        </View>
-
-        {/* Cartão do Formulário */}
-        <View style={estilos.cartao}>
-          <Input 
-            iconName="mail"
-            placeholder="E-mail"
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <Input 
-            iconName="lock"
-            placeholder="Senha"
-            isPassword
-          />
-          
-          <TouchableOpacity style={estilos.containerEsqueceuSenha}>
-            <Text style={estilos.textoEsqueceuSenha}>Esqueceu sua senha?</Text>
-          </TouchableOpacity>
-
-          <Button title="Entrar" style={estilos.botaoEntrar} />
-
-          <View style={estilos.containerDivisor}>
-            <View style={estilos.divisor} />
-            <Text style={estilos.textoDivisor}>ou entre com</Text>
-            <View style={estilos.divisor} />
-          </View>
-
-          <View style={estilos.containerBotoesSociais}>
-            <SocialButton title="Google" iconName="google" style={estilos.botaoSocialEsq} />
-            <SocialButton title="Apple" iconName="apple1" style={estilos.botaoSocialDir} />
-          </View>
-
-          <View style={estilos.containerRodape}>
-            <Text style={estilos.textoRodape}>Ainda não tem uma conta? </Text>
-            <TouchableOpacity>
-              <Text style={estilos.acaoRodape}>Criar conta</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
-
-      {/* Fundo Ondulado (Wave) */}
+    <SafeAreaView style={estilos.container} edges={['top', 'bottom']}>
+      {/* Fundo Ondulado (Wave) fixo na parte inferior */}
       <View style={estilos.containerOnda} pointerEvents="none">
-        <Svg height="120" width={largura} viewBox="0 0 1440 320">
+        <Svg height="120" width={largura} viewBox="0 0 1440 320" preserveAspectRatio="none">
           <Path
             fill="#FBE7E9"
             fillOpacity="1"
@@ -103,6 +24,94 @@ export default function TelaInicial() {
           />
         </Svg>
       </View>
+
+      <KeyboardAvoidingView 
+        style={estilos.tecladoContainer} 
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={estilos.conteudoPrincipal}>
+          
+          {/* Seção Gráfica do Cabeçalho */}
+          <View style={estilos.graficosCabecalho}>
+            {/* Polaroid Esquerda */}
+            <View style={[estilos.polaroid, estilos.polaroidEsquerda]}>
+              <Image 
+                source="https://picsum.photos/seed/sunset/200/250" 
+                style={estilos.imagemPolaroid} 
+                contentFit="cover"
+              />
+            </View>
+            
+            {/* Polaroid Direita */}
+            <View style={[estilos.polaroid, estilos.polaroidDireita]}>
+              <Image 
+                source="https://picsum.photos/seed/field/200/250" 
+                style={estilos.imagemPolaroid} 
+                contentFit="cover"
+              />
+            </View>
+
+            {/* Nuvem e Coração Central */}
+            <View style={estilos.containerLogo}>
+              <Feather name="cloud" size={80} color="#4A3A35" />
+              <View style={estilos.containerCoracao}>
+                <Feather name="heart" size={32} color="#F29CBA" />
+              </View>
+            </View>
+          </View>
+
+          {/* Textos */}
+          <View style={estilos.containerTexto}>
+            <Text style={estilos.titulo}>Guarde o que importa.</Text>
+            <Text style={estilos.subtitulo}>
+              Compartilhe momentos. Crie <Text style={estilos.destaqueSubtitulo}>memórias.</Text>
+            </Text>
+          </View>
+
+          {/* Cartão do Formulário */}
+          <View style={estilos.cartao}>
+            <Input 
+              iconName="mail"
+              placeholder="E-mail"
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            <Input 
+              iconName="lock"
+              placeholder="Senha"
+              isPassword
+            />
+            
+            <TouchableOpacity style={estilos.containerEsqueceuSenha}>
+              <Text style={estilos.textoEsqueceuSenha}>Esqueceu sua senha?</Text>
+            </TouchableOpacity>
+
+            <Button title="Entrar" style={estilos.botaoEntrar} />
+
+            <View style={estilos.containerDivisor}>
+              <View style={estilos.divisor} />
+              <Text style={estilos.textoDivisor}>ou entre com</Text>
+              <View style={estilos.divisor} />
+            </View>
+
+            <View style={estilos.containerBotoesSociais}>
+              <SocialButton title="Google" iconName="google" style={estilos.botaoSocialEsq} />
+              <SocialButton title="Apple" iconName="apple1" style={estilos.botaoSocialDir} />
+            </View>
+
+            <View style={estilos.containerRodape}>
+              <Text style={estilos.textoRodape}>Ainda não tem uma conta? </Text>
+              <TouchableOpacity>
+                <Text style={estilos.acaoRodape}>Criar conta</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Espaçador flexível para empurrar o conteúdo quando necessário */}
+          <View style={estilos.espacadorBase} />
+
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -112,17 +121,21 @@ const estilos = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FAF5F2',
   },
-  conteudoScroll: {
-    flexGrow: 1,
+  tecladoContainer: {
+    flex: 1,
+  },
+  conteudoPrincipal: {
+    flex: 1,
     paddingHorizontal: 24,
-    paddingBottom: 140,
+    justifyContent: 'center', // Centraliza o conteúdo verticalmente na tela
   },
   graficosCabecalho: {
-    height: 200,
-    marginTop: 40,
+    height: 180,
+    marginTop: 10,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    zIndex: 1,
   },
   polaroid: {
     position: 'absolute',
@@ -136,18 +149,18 @@ const estilos = StyleSheet.create({
     elevation: 4,
   },
   polaroidEsquerda: {
-    left: -10,
+    left: 0,
     top: 20,
     transform: [{ rotate: '-12deg' }],
   },
   polaroidDireita: {
-    right: -10,
+    right: 0,
     top: 40,
     transform: [{ rotate: '12deg' }],
   },
   imagemPolaroid: {
-    width: 110,
-    height: 130,
+    width: 90,
+    height: 110,
   },
   containerLogo: {
     alignItems: 'center',
@@ -161,17 +174,18 @@ const estilos = StyleSheet.create({
   },
   containerTexto: {
     alignItems: 'center',
-    marginTop: 40,
-    marginBottom: 32,
+    marginTop: 20,
+    marginBottom: 24,
+    zIndex: 1,
   },
   titulo: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: '700',
     color: '#4A3A35',
     marginBottom: 8,
   },
   subtitulo: {
-    fontSize: 15,
+    fontSize: 14,
     color: '#666666',
   },
   destaqueSubtitulo: {
@@ -199,7 +213,7 @@ const estilos = StyleSheet.create({
     fontWeight: '500',
   },
   botaoEntrar: {
-    marginBottom: 32,
+    marginBottom: 24,
   },
   containerDivisor: {
     flexDirection: 'row',
@@ -219,7 +233,7 @@ const estilos = StyleSheet.create({
   containerBotoesSociais: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 32,
+    marginBottom: 24,
   },
   botaoSocialEsq: {
     marginRight: 8,
@@ -246,6 +260,9 @@ const estilos = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    zIndex: 1,
+    zIndex: 0, // Garante que fique atrás de todo o conteúdo
   },
+  espacadorBase: {
+    height: 20, // Dá uma pequena margem inferior para o cartão não encostar no rodapé
+  }
 });
