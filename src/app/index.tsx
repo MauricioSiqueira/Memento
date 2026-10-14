@@ -1,22 +1,34 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, KeyboardAvoidingView, Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Image } from 'expo-image';
-import { Link, router } from 'expo-router';
-import Svg, { Path } from 'react-native-svg';
-import { Feather, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { Link, router } from "expo-router";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Svg, { Path } from "react-native-svg";
 
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 
 export default function TelaInicial() {
   const { width: largura } = useWindowDimensions();
 
   return (
-    <SafeAreaView style={estilos.container} edges={['top', 'bottom']}>
+    <SafeAreaView style={estilos.container} edges={["top", "bottom"]}>
       {/* Fundo Ondulado (Wave) fixo na parte inferior */}
       <View style={estilos.containerOnda} pointerEvents="none">
-        <Svg height="120" width={largura} viewBox="0 0 1440 320" preserveAspectRatio="none">
+        <Svg
+          height="120"
+          width={largura}
+          viewBox="0 0 1440 320"
+          preserveAspectRatio="none"
+        >
           <Path
             fill="#FBE7E9"
             fillOpacity="1"
@@ -27,10 +39,9 @@ export default function TelaInicial() {
 
       <KeyboardAvoidingView
         style={estilos.tecladoContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <View style={estilos.conteudoPrincipal}>
-
           {/* Seção Gráfica do Cabeçalho */}
           <View style={estilos.graficosCabecalho}>
             {/* Polaroid Esquerda */}
@@ -67,7 +78,8 @@ export default function TelaInicial() {
           <View style={estilos.containerTexto}>
             <Text style={estilos.titulo}>Guarde o que importa.</Text>
             <Text style={estilos.subtitulo}>
-              Compartilhe momentos. Crie <Text style={estilos.destaqueSubtitulo}>memórias.</Text>
+              Compartilhe momentos. Crie{" "}
+              <Text style={estilos.destaqueSubtitulo}>memórias.</Text>
             </Text>
           </View>
 
@@ -79,20 +91,18 @@ export default function TelaInicial() {
               keyboardType="email-address"
               autoCapitalize="none"
             />
-            <Input
-              iconName="lock"
-              placeholder="Senha"
-              isPassword
-            />
+            <Input iconName="lock" placeholder="Senha" isPassword />
 
             <TouchableOpacity style={estilos.containerEsqueceuSenha}>
-              <Text style={estilos.textoEsqueceuSenha}>Esqueceu sua senha?</Text>
+              <Text style={estilos.textoEsqueceuSenha}>
+                Esqueceu sua senha?
+              </Text>
             </TouchableOpacity>
 
             <Button
               title="Entrar"
               style={estilos.botaoEntrar}
-              onPress={() => router.replace('/home')}
+              onPress={() => router.replace("/home")}
             />
 
             <View style={estilos.containerRodape}>
@@ -107,7 +117,6 @@ export default function TelaInicial() {
 
           {/* Espaçador flexível para empurrar o conteúdo quando necessário */}
           <View style={estilos.espacadorBase} />
-
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -117,7 +126,7 @@ export default function TelaInicial() {
 const estilos = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAF5F2',
+    backgroundColor: "#FAF5F2",
   },
   tecladoContainer: {
     flex: 1,
@@ -125,22 +134,22 @@ const estilos = StyleSheet.create({
   conteudoPrincipal: {
     flex: 1,
     paddingHorizontal: 24,
-    justifyContent: 'center', // Centraliza o conteúdo verticalmente na tela
+    justifyContent: "center", // Centraliza o conteúdo verticalmente na tela
   },
   graficosCabecalho: {
     height: 180,
     marginTop: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
     zIndex: 1,
   },
   polaroid: {
-    position: 'absolute',
-    backgroundColor: '#FFF',
+    position: "absolute",
+    backgroundColor: "#FFF",
     padding: 8,
     paddingBottom: 24,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -149,78 +158,78 @@ const estilos = StyleSheet.create({
   polaroidEsquerda: {
     left: 0,
     top: 20,
-    transform: [{ rotate: '-12deg' }],
+    transform: [{ rotate: "-12deg" }],
   },
   polaroidDireita: {
     right: 0,
     top: 40,
-    transform: [{ rotate: '12deg' }],
+    transform: [{ rotate: "12deg" }],
   },
   imagemPolaroid: {
     width: 90,
     height: 110,
   },
   florEsquerda: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -10,
     left: -14,
     fontSize: 28,
   },
   florDireita: {
-    position: 'absolute',
+    position: "absolute",
     bottom: -6,
     right: -10,
     fontSize: 28,
   },
   fitaWashi: {
-    position: 'absolute',
+    position: "absolute",
     top: -10,
     right: 10,
     width: 28,
     height: 16,
-    backgroundColor: '#F6BFCF',
+    backgroundColor: "#F6BFCF",
     opacity: 0.85,
-    transform: [{ rotate: '30deg' }],
+    transform: [{ rotate: "30deg" }],
     zIndex: 2,
   },
   containerLogo: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     zIndex: 10,
     marginTop: 20,
   },
   containerCoracao: {
-    position: 'absolute',
+    position: "absolute",
     top: 44,
-    backgroundColor: '#FAF5F2',
+    backgroundColor: "#FAF5F2",
     borderRadius: 20,
     padding: 4,
   },
   containerTexto: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 20,
     marginBottom: 24,
     zIndex: 1,
   },
   titulo: {
     fontSize: 24,
-    fontWeight: '700',
-    color: '#4A3A35',
+    fontWeight: "700",
+    color: "#4A3A35",
     marginBottom: 8,
   },
   subtitulo: {
     fontSize: 14,
-    color: '#666666',
+    color: "#666666",
   },
   destaqueSubtitulo: {
-    color: '#F29CBA',
-    fontWeight: '500',
+    color: "#4A3A35",
+    fontWeight: "700",
   },
   cartao: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 24,
     padding: 24,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.05,
     shadowRadius: 20,
@@ -228,33 +237,33 @@ const estilos = StyleSheet.create({
     zIndex: 10,
   },
   containerEsqueceuSenha: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     marginBottom: 24,
   },
   textoEsqueceuSenha: {
-    color: '#F29CBA',
+    color: "#42A5F5",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   botaoEntrar: {
     marginBottom: 24,
   },
   containerRodape: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   textoRodape: {
-    color: '#6A5A55',
+    color: "#6A5A55",
     fontSize: 14,
   },
   acaoRodape: {
-    color: '#F29CBA',
+    color: "#42A5F5",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   containerOnda: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
@@ -262,5 +271,5 @@ const estilos = StyleSheet.create({
   },
   espacadorBase: {
     height: 20, // Dá uma pequena margem inferior para o cartão não encostar no rodapé
-  }
+  },
 });
