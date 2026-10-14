@@ -1,5 +1,7 @@
 import React from 'react';
-import { TouchableOpacity, Text, TouchableOpacityProps, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, TouchableOpacityProps, ActivityIndicator } from 'react-native';
+
+import { AccessibleText } from '@/components/ui/AccessibleText';
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
@@ -21,7 +23,7 @@ export function Button({ title, loading, style, className, ...rest }: ButtonProp
       {loading ? (
         <ActivityIndicator color="#FFFFFF" />
       ) : (
-        <Text className="text-lg font-semibold text-white">{title}</Text>
+        <AccessibleText className="text-lg font-semibold text-white">{title}</AccessibleText>
       )}
     </TouchableOpacity>
   );

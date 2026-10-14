@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { View, TextInput, TextInputProps, TouchableOpacity, Text, ViewStyle, StyleProp } from 'react-native';
+import { View, TextInput, TextInputProps, TouchableOpacity, ViewStyle, StyleProp } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+
+import { AccessibleText } from '@/components/ui/AccessibleText';
+import { useAccessibilityPreferences } from '@/contexts/accessibility-context';
 
 interface InputProps extends TextInputProps {
   iconName?: keyof typeof Feather.glyphMap;
@@ -11,6 +14,7 @@ interface InputProps extends TextInputProps {
 
 export function Input({ iconName, isPassword, mensagemErro, containerStyle, style, ...rest }: InputProps) {
   const [isSecure, setIsSecure] = useState(isPassword);
+  const { textoMaior } = useAccessibilityPreferences();
   const temErro = Boolean(mensagemErro);
 
   return (
@@ -20,7 +24,7 @@ export function Input({ iconName, isPassword, mensagemErro, containerStyle, styl
           <Feather name={iconName} size={20} color="#4A3A35" style={{ marginRight: 12 }} />
         )}
         <TextInput
-          className="flex-1 text-base text-memento-ink"
+          className={`flex-1 ${textoMaior ? 'text-lg' : 'text-base'} text-memento-ink`}
           style={style}
           placeholderTextColor="#B0A6A4"
           secureTextEntry={isSecure}
@@ -32,7 +36,7 @@ export function Input({ iconName, isPassword, mensagemErro, containerStyle, styl
           </TouchableOpacity>
         )}
       </View>
-      {temErro && <Text className="ml-1 mt-1.5 text-xs text-memento-danger">{mensagemErro}</Text>}
+      {temErro && <AccessibleText className="ml-1 mt-1.5 text-xs text-memento-danger">{mensagemErro}</AccessibleText>}
     </View>
   );
 }

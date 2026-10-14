@@ -1,9 +1,10 @@
 import React from 'react';
-import { Pressable, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, TouchableOpacity, View } from 'react-native';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
+import { AccessibleText } from '@/components/ui/AccessibleText';
 import type { Album } from '@/features/albums/context/albuns-context';
 
 interface AlbumCardProps {
@@ -31,9 +32,9 @@ export function AlbumCard({ album, aoAlternarFavorito }: AlbumCardProps) {
       </TouchableOpacity>
 
       <View className="absolute bottom-0 left-0 right-0 bg-[#4A3A35]/45 px-4 py-3">
-        <Text className="text-base font-bold text-white" numberOfLines={1}>
+        <AccessibleText className="text-base font-bold text-white" numberOfLines={1}>
           {album.nome}
-        </Text>
+        </AccessibleText>
       </View>
     </Pressable>
   );

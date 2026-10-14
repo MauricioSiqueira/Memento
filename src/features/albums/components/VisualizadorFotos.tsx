@@ -5,13 +5,14 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   Pressable,
-  Text,
   useWindowDimensions,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
+
+import { AccessibleText } from '@/components/ui/AccessibleText';
 
 interface VisualizadorFotosProps {
   visivel: boolean;
@@ -72,9 +73,9 @@ export function VisualizadorFotos({ visivel, fotos, indiceInicial, aoFechar }: V
         </Pressable>
 
         <View className="absolute self-center" style={{ top: topoSeguro + 20 }}>
-          <Text className="text-sm font-semibold text-white">
+          <AccessibleText className="text-sm font-semibold text-white">
             {indiceAtual + 1} / {fotos.length}
-          </Text>
+          </AccessibleText>
         </View>
       </View>
     </Modal>

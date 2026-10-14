@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Text, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 
+import { AccessibleText } from '@/components/ui/AccessibleText';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAlbuns } from '@/features/albums/context/albuns-context';
@@ -29,7 +30,7 @@ export default function TelaCriarAlbum() {
           <TouchableOpacity onPress={() => router.back()} hitSlop={12} accessibilityRole="button" accessibilityLabel="Fechar">
             <Feather name="x" size={22} color="#4A3A35" />
           </TouchableOpacity>
-          <Text className="text-lg font-bold text-memento-ink">Novo álbum</Text>
+          <AccessibleText className="text-lg font-bold text-memento-ink">Novo álbum</AccessibleText>
           <View className="w-[22px]" />
         </View>
 

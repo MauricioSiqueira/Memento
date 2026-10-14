@@ -8,14 +8,16 @@ import {
   Linking,
   ScrollView,
   Switch,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { AccessibleText } from "@/components/ui/AccessibleText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { FolhaAcoes, type OpcaoFolhaAcoes } from "@/components/ui/FolhaAcoes";
 import { Input } from "@/components/ui/Input";
+import { useAccessibilityPreferences } from "@/contexts/accessibility-context";
 
 const COR_SAIR = "#E0637A";
 
@@ -34,7 +36,7 @@ export default function TelaPersonalizacao() {
   const [fotoPerfil, setFotoPerfil] = useState(AVATAR_PADRAO);
   const [temaEscuro, setTemaEscuro] = useState(false);
   const [modoDaltonico, setModoDaltonico] = useState(false);
-  const [textoMaior, setTextoMaior] = useState(false);
+  const { textoMaior, setTextoMaior } = useAccessibilityPreferences();
 
   const [folhaFotoVisivel, setFolhaFotoVisivel] = useState(false);
 
@@ -118,9 +120,9 @@ export default function TelaPersonalizacao() {
         contentContainerClassName="px-6 pb-36 pt-6"
         showsVerticalScrollIndicator={false}
       >
-        <Text className="mb-6 text-[22px] font-bold text-memento-ink">
+        <AccessibleText className="mb-6 text-[22px] font-bold text-memento-ink">
           Personalização
-        </Text>
+        </AccessibleText>
 
         <View className="mb-8 items-center">
           <View className="h-24 w-24">
@@ -154,9 +156,9 @@ export default function TelaPersonalizacao() {
                 containerStyle={{ flex: 1, marginBottom: 0 }}
               />
               <TouchableOpacity onPress={() => setEditandoNome(false)}>
-                <Text className="text-sm font-semibold text-memento-accent">
+                <AccessibleText className="text-sm font-semibold text-memento-accent">
                   Salvar
-                </Text>
+                </AccessibleText>
               </TouchableOpacity>
             </View>
           ) : (
@@ -164,9 +166,9 @@ export default function TelaPersonalizacao() {
               className="mt-4 flex-row items-center justify-center gap-2"
               onPress={() => setEditandoNome(true)}
             >
-              <Text className="text-lg font-semibold text-memento-ink">
+              <AccessibleText className="text-lg font-semibold text-memento-ink">
                 {nome}
-              </Text>
+              </AccessibleText>
               <Feather name="edit-2" size={14} color="#8A7A75" />
             </TouchableOpacity>
           )}
@@ -196,9 +198,9 @@ export default function TelaPersonalizacao() {
           onPress={aoSairDaConta}
         >
           <Feather name="log-out" size={18} color={COR_SAIR} />
-          <Text className="text-[15px] font-semibold text-memento-danger">
+          <AccessibleText className="text-[15px] font-semibold text-memento-danger">
             Sair da conta
-          </Text>
+          </AccessibleText>
         </TouchableOpacity>
       </ScrollView>
 
@@ -230,7 +232,7 @@ function LinhaConfiguracao({
     <View
       className={`flex-row items-center justify-between py-[18px] ${ultima ? "" : "border-b border-memento-line"}`}
     >
-      <Text className="text-[15px] text-memento-ink">{titulo}</Text>
+      <AccessibleText className="text-[15px] text-memento-ink">{titulo}</AccessibleText>
       <Switch
         value={valor}
         onValueChange={aoAlterar}

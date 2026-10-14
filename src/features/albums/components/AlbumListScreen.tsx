@@ -1,9 +1,10 @@
 import { useCallback, useRef } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
+import { AccessibleText } from '@/components/ui/AccessibleText';
 import { AlbumCard } from './AlbumCard';
 import type { Album } from '@/features/albums/context/albuns-context';
 
@@ -38,7 +39,7 @@ export function AlbumListScreen({
         contentContainerClassName="items-center px-6 pb-36 pt-6"
         showsVerticalScrollIndicator={false}
       >
-        <Text className="mb-5 self-start text-[22px] font-bold text-memento-ink">{title}</Text>
+        <AccessibleText className="mb-5 self-start text-[22px] font-bold text-memento-ink">{title}</AccessibleText>
 
         {albums.length > 0 ? (
           <View className="w-full gap-4">
@@ -47,7 +48,7 @@ export function AlbumListScreen({
             ))}
           </View>
         ) : (
-          <Text className="mt-10 text-center text-sm text-memento-muted">{emptyMessage}</Text>
+          <AccessibleText className="mt-10 text-center text-sm text-memento-muted">{emptyMessage}</AccessibleText>
         )}
 
         {onAddAlbum && (

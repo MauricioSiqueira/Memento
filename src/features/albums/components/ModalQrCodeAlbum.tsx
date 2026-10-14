@@ -1,7 +1,9 @@
 import React from 'react';
-import { Modal, Pressable, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, Pressable, TouchableOpacity, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { Feather } from '@expo/vector-icons';
+
+import { AccessibleText } from '@/components/ui/AccessibleText';
 
 interface ModalQrCodeAlbumProps {
   visivel: boolean;
@@ -20,12 +22,12 @@ export function ModalQrCodeAlbum({ visivel, aoFechar, nomeAlbum, link }: ModalQr
             <Feather name="x" size={20} color="#4A3A35" />
           </TouchableOpacity>
 
-          <Text className="mb-2 mt-2 text-center text-[17px] font-bold text-memento-ink" numberOfLines={2}>
+          <AccessibleText className="mb-2 mt-2 text-center text-[17px] font-bold text-memento-ink" numberOfLines={2}>
             Convidar para "{nomeAlbum}"
-          </Text>
-          <Text className="mb-5 text-center text-[13px] text-[#8A7A75]">
+          </AccessibleText>
+          <AccessibleText className="mb-5 text-center text-[13px] text-[#8A7A75]">
             Peça para a pessoa escanear este código para entrar no álbum.
-          </Text>
+          </AccessibleText>
 
           <View className="rounded-2xl border border-memento-line bg-white p-4">
             <QRCode value={link} size={200} color="#4A3A35" backgroundColor="#FFFFFF" />

@@ -1,7 +1,9 @@
 import React from 'react';
-import { Modal, Pressable, Text, View, useWindowDimensions } from 'react-native';
+import { Modal, Pressable, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather, Ionicons } from '@expo/vector-icons';
+
+import { AccessibleText } from '@/components/ui/AccessibleText';
 
 export type IconeOpcaoFolhaAcoes =
   | { familia: 'feather'; nome: keyof typeof Feather.glyphMap }
@@ -45,7 +47,7 @@ export function FolhaAcoes({ visivel, aoFechar, opcoes, titulo, alturaFracao = 0
           onPress={() => {}}
         >
           <View className="mb-4 h-1 w-10 self-center rounded-full bg-memento-line" />
-          {titulo ? <Text className="mb-2 text-base font-bold text-memento-ink">{titulo}</Text> : null}
+          {titulo ? <AccessibleText className="mb-2 text-base font-bold text-memento-ink">{titulo}</AccessibleText> : null}
 
           <View className="flex-1 justify-center">
             {opcoes.map((opcao, indice) => (
@@ -71,9 +73,9 @@ export function FolhaAcoes({ visivel, aoFechar, opcoes, titulo, alturaFracao = 0
                     color={opcao.destrutiva ? COR_DESTRUTIVA : COR_TEXTO}
                   />
                 )}
-                <Text className={`text-base ${opcao.destrutiva ? 'text-memento-danger' : 'text-memento-ink'}`}>
+                <AccessibleText className={`text-base ${opcao.destrutiva ? 'text-memento-danger' : 'text-memento-ink'}`}>
                   {opcao.rotulo}
-                </Text>
+                </AccessibleText>
               </Pressable>
             ))}
           </View>

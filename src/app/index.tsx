@@ -4,11 +4,12 @@ import { Link, router } from "expo-router";
 import {
   KeyboardAvoidingView,
   Platform,
-  Text,
   TouchableOpacity,
   useWindowDimensions,
   View,
 } from "react-native";
+
+import { AccessibleText } from "@/components/ui/AccessibleText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 
@@ -50,7 +51,7 @@ export default function TelaInicial() {
                 style={{ width: 90, height: 110 }}
                 contentFit="cover"
               />
-              <Text className="absolute -bottom-2 -left-3 text-[28px]">🌸</Text>
+              <AccessibleText className="absolute -bottom-2 -left-3 text-[28px]">🌸</AccessibleText>
             </View>
 
             {/* Polaroid Direita */}
@@ -61,7 +62,7 @@ export default function TelaInicial() {
                 style={{ width: 90, height: 110 }}
                 contentFit="cover"
               />
-              <Text className="absolute -bottom-1 -right-2 text-[28px]">🌸</Text>
+              <AccessibleText className="absolute -bottom-1 -right-2 text-[28px]">🌸</AccessibleText>
             </View>
 
             {/* Nuvem e Coração Central */}
@@ -75,11 +76,11 @@ export default function TelaInicial() {
 
           {/* Textos */}
           <View className="z-10 mb-6 mt-5 items-center">
-            <Text className="mb-2 text-2xl font-bold text-memento-ink">Guarde o que importa.</Text>
-            <Text className="text-sm text-[#666666]">
+            <AccessibleText className="mb-2 text-2xl font-bold text-memento-ink">Guarde o que importa.</AccessibleText>
+            <AccessibleText className="text-sm text-[#666666]">
               Compartilhe momentos. Crie{" "}
-              <Text className="font-bold text-memento-ink">memórias.</Text>
-            </Text>
+              <AccessibleText className="font-bold text-memento-ink">memórias.</AccessibleText>
+            </AccessibleText>
           </View>
 
           {/* Cartão do Formulário */}
@@ -93,9 +94,9 @@ export default function TelaInicial() {
             <Input iconName="lock" placeholder="Senha" isPassword />
 
             <TouchableOpacity className="mb-6 self-end">
-              <Text className="text-sm font-medium text-sky-500">
+              <AccessibleText className="text-sm font-medium text-sky-500">
                 Esqueceu sua senha?
-              </Text>
+              </AccessibleText>
             </TouchableOpacity>
 
             <Button
@@ -105,10 +106,10 @@ export default function TelaInicial() {
             />
 
             <View className="flex-row items-center justify-center">
-              <Text className="text-sm text-memento-muted">Ainda não tem uma conta? </Text>
+              <AccessibleText className="text-sm text-memento-muted">Ainda não tem uma conta? </AccessibleText>
               <Link href="/criar-conta" asChild>
                 <TouchableOpacity>
-                  <Text className="text-sm font-semibold text-sky-500">Criar conta</Text>
+                  <AccessibleText className="text-sm font-semibold text-sky-500">Criar conta</AccessibleText>
                 </TouchableOpacity>
               </Link>
             </View>

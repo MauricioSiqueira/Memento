@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { FlatList, Share, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import { FlatList, Share, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 
+import { AccessibleText } from '@/components/ui/AccessibleText';
 import { ModalQrCodeAlbum } from '@/features/albums/components/ModalQrCodeAlbum';
 import { VisualizadorFotos } from '@/features/albums/components/VisualizadorFotos';
 import { FolhaAcoes, type OpcaoFolhaAcoes } from '@/components/ui/FolhaAcoes';
@@ -67,9 +68,9 @@ export default function TelaAlbum() {
           <Feather name="arrow-left" size={22} color="#4A3A35" />
         </TouchableOpacity>
 
-        <Text className="flex-1 text-center text-lg font-bold text-memento-ink" numberOfLines={1}>
+        <AccessibleText className="flex-1 text-center text-lg font-bold text-memento-ink" numberOfLines={1}>
           {album?.nome ?? 'Álbum'}
-        </Text>
+        </AccessibleText>
 
         {album ? (
           <TouchableOpacity onPress={() => setOpcoesVisiveis(true)} hitSlop={12}>
@@ -82,12 +83,12 @@ export default function TelaAlbum() {
 
       {!album ? (
         <View className="flex-1 items-center justify-center gap-3 px-8">
-          <Text className="text-center text-sm text-memento-muted">Este álbum não foi encontrado.</Text>
+          <AccessibleText className="text-center text-sm text-memento-muted">Este álbum não foi encontrado.</AccessibleText>
         </View>
       ) : album.fotos.length === 0 ? (
         <View className="flex-1 items-center justify-center gap-3 px-8">
           <Feather name="image" size={40} color="#B0A6A4" />
-          <Text className="text-center text-sm text-memento-muted">Este álbum ainda não tem fotos.</Text>
+          <AccessibleText className="text-center text-sm text-memento-muted">Este álbum ainda não tem fotos.</AccessibleText>
         </View>
       ) : (
         <FlatList

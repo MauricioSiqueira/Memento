@@ -5,10 +5,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { AccessibleText } from "@/components/ui/AccessibleText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { FormularioCadastro } from "@/features/auth/components/FormularioCadastro";
@@ -41,13 +42,13 @@ export default function TelaCriarConta() {
           </TouchableOpacity>
 
           <View className="mb-6 mt-3">
-            <Text className="mb-2 text-2xl font-bold text-memento-ink">Crie sua conta</Text>
-            <Text className="text-sm leading-5 text-[#666666]">
+            <AccessibleText className="mb-2 text-2xl font-bold text-memento-ink">Crie sua conta</AccessibleText>
+            <AccessibleText className="text-sm leading-5 text-[#666666]">
               Preencha os dados abaixo para começar a{" "}
-              <Text className="font-bold text-memento-ink">
+              <AccessibleText className="font-bold text-memento-ink">
                 guardar suas memórias.
-              </Text>
-            </Text>
+              </AccessibleText>
+            </AccessibleText>
           </View>
 
           <View className="rounded-3xl bg-white p-6 shadow-lg shadow-black/5">
@@ -55,9 +56,9 @@ export default function TelaCriarConta() {
           </View>
 
           <View className="mt-6 flex-row items-center justify-center">
-            <Text className="text-sm text-memento-muted">Já tem uma conta? </Text>
+            <AccessibleText className="text-sm text-memento-muted">Já tem uma conta? </AccessibleText>
             <TouchableOpacity onPress={() => router.back()}>
-              <Text className="text-sm font-semibold text-sky-500">Entrar</Text>
+              <AccessibleText className="text-sm font-semibold text-sky-500">Entrar</AccessibleText>
             </TouchableOpacity>
           </View>
         </ScrollView>

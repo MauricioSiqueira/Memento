@@ -2,6 +2,21 @@
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   presets: [require('nativewind/preset')],
+  safelist: [
+    'text-xs',
+    'text-sm',
+    'text-base',
+    'text-lg',
+    'text-xl',
+    'text-2xl',
+    'text-3xl',
+    'text-4xl',
+    'text-[16px]',
+    'text-[18px]',
+    'text-[20px]',
+    'text-[26px]',
+    'text-[34px]',
+  ],
   theme: {
     extend: {
       colors: {
