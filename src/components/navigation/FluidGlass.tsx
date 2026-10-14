@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, View } from 'react-native';
 import { GlassView, isLiquidGlassAvailable } from 'expo-glass-effect';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -38,7 +38,6 @@ const ICONES_POR_ROTA: Record<string, { ativo: NomeIcone; inativo: NomeIcone }> 
 const ROTA_CRIAR_ALBUM = 'criar';
 const COR_ATIVA = '#4A3A35';
 const COR_INATIVA = '#B0A6A4';
-const COR_DESTAQUE = '#F29CBA';
 
 /** Barra de navegação inferior flutuante com efeito de vidro líquido (iOS 26+, com fallback nas demais plataformas). */
 export default function FluidGlass({ state, navigation, insets }: FluidGlassProps) {
@@ -47,11 +46,32 @@ export default function FluidGlass({ state, navigation, insets }: FluidGlassProp
   const opcoesCriarAlbum = useMemo(() => criarOpcoesNovoAlbum(), []);
 
   return (
-    <View style={[estilos.wrapper, { paddingBottom: insets.bottom || 12 }]} pointerEvents="box-none">
+    <View className="absolute bottom-0 left-0 right-0 items-center" style={{ paddingBottom: insets.bottom || 12 }} pointerEvents="box-none">
       <GlassView
         glassEffectStyle="regular"
         isInteractive
-        style={[estilos.barra, !vidroNativoDisponivel && estilos.barraComFallback]}
+        style={[
+          {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '88%',
+            maxWidth: 360,
+            height: 64,
+            paddingHorizontal: 16,
+            borderRadius: 32,
+          },
+          !vidroNativoDisponivel && {
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            borderWidth: 1,
+            borderColor: '#EFEAE7',
+            shadowColor: '#4A3A35',
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.15,
+            shadowRadius: 16,
+            elevation: 8,
+          },
+        ]}
       >
         {state.routes.map((route, index) => {
           const emFoco = state.index === index;
@@ -63,9 +83,9 @@ export default function FluidGlass({ state, navigation, insets }: FluidGlassProp
                 key={route.key}
                 onPress={() => setFolhaCriarVisivel(true)}
                 hitSlop={8}
-                style={estilos.item}
+                className="h-full flex-1 items-center justify-center"
               >
-                <View style={estilos.botaoCriar}>
+                <View className="h-11 w-11 items-center justify-center rounded-full bg-memento-accent">
                   <Ionicons name="add" size={26} color="#FFFFFF" />
                 </View>
               </Pressable>
@@ -87,7 +107,7 @@ export default function FluidGlass({ state, navigation, insets }: FluidGlassProp
           const icones = ICONES_POR_ROTA[route.name] ?? ICONES_POR_ROTA.index;
 
           return (
-            <Pressable key={route.key} onPress={aoPressionar} hitSlop={8} style={estilos.item}>
+            <Pressable key={route.key} onPress={aoPressionar} hitSlop={8} className="h-full flex-1 items-center justify-center">
               <Ionicons
                 name={emFoco ? icones.ativo : icones.inativo}
                 size={24}
@@ -108,47 +128,3 @@ export default function FluidGlass({ state, navigation, insets }: FluidGlassProp
     </View>
   );
 }
-
-const estilos = StyleSheet.create({
-  wrapper: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    alignItems: 'center',
-  },
-  barra: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '88%',
-    maxWidth: 360,
-    height: 64,
-    paddingHorizontal: 16,
-    borderRadius: 32,
-  },
-  barraComFallback: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderWidth: 1,
-    borderColor: '#EFEAE7',
-    shadowColor: '#4A3A35',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 8,
-  },
-  item: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-  },
-  botaoCriar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: COR_DESTAQUE,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

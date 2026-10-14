@@ -1,10 +1,10 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { useFormularioCadastro, ValoresFormularioCadastro } from '@/hooks/use-formulario-cadastro';
-import { TAMANHO_MAXIMO_SENHA } from '@/utils/validacao';
+import { useFormularioCadastro, ValoresFormularioCadastro } from '@/features/auth/hooks/use-formulario-cadastro';
+import { TAMANHO_MAXIMO_SENHA } from '@/features/auth/utils/validacao';
 
 interface FormularioCadastroProps {
   aoCadastrar: (valores: ValoresFormularioCadastro) => void | Promise<void>;
@@ -14,7 +14,7 @@ export function FormularioCadastro({ aoCadastrar }: FormularioCadastroProps) {
   const { valores, erros, enviando, alterarCampo, submeter } = useFormularioCadastro({ aoCadastrar });
 
   return (
-    <View style={estilos.container}>
+    <View className="w-full">
       <Input
         iconName="user"
         placeholder="Nome de usuário"
@@ -66,16 +66,7 @@ export function FormularioCadastro({ aoCadastrar }: FormularioCadastroProps) {
         mensagemErro={erros.dataNascimento}
       />
 
-      <Button title="Criar conta" style={estilos.botao} loading={enviando} onPress={submeter} />
+      <Button title="Criar conta" className="mt-2" loading={enviando} onPress={submeter} />
     </View>
   );
 }
-
-const estilos = StyleSheet.create({
-  container: {
-    width: '100%',
-  },
-  botao: {
-    marginTop: 8,
-  },
-});

@@ -1,56 +1,25 @@
-# Welcome to your Expo app 👋
+# Memento
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicativo Expo para criar e compartilhar álbuns de fotos.
 
-## Get started
+## Arquitetura
 
-1. Install dependencies
+- `src/app/` contém as rotas Expo Router. Cada arquivo de rota conecta a tela ao domínio e à navegação.
+- `src/features/<domínio>/` concentra componentes, hooks, regras e estado próprios de uma funcionalidade, como `albums` e `auth`.
+- `src/components/` contém peças visuais reutilizáveis entre domínios, como os controles de `ui/` e a navegação.
+- `src/hooks/`, `src/utils/` e `src/constants/` ficam reservados para lógica realmente compartilhada.
 
-   ```bash
-   npm install
-   ```
+Use componentes funcionais com props tipadas, mantenha estado perto de quem o consome e promova uma interface para componente compartilhado quando ela tiver papel claro e for usada por mais de uma tela. As rotas devem permanecer pequenas e delegar a apresentação e as regras para `features/`.
 
-2. Start the app
+## Estilos
 
-   ```bash
-   npx expo start
-   ```
+O app usa NativeWind 4 com Tailwind CSS 3 para estilos universais em iOS, Android e web. A paleta Memento está em `tailwind.config.js` sob `memento-*`; prefira essas classes a valores de marca repetidos. `StyleSheet` continua adequado para estilos calculados, APIs nativas ou elementos em que classes não sejam suportadas.
 
-In the output, you'll find options to open the app in a
+## Desenvolvimento
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```sh
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Este protótipo mantém os álbuns em estado local. Autenticação, persistência e sincronização em nuvem ainda não estão conectadas.

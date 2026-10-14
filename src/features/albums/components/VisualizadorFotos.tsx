@@ -5,7 +5,6 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   Pressable,
-  StyleSheet,
   Text,
   useWindowDimensions,
   View,
@@ -38,7 +37,7 @@ export function VisualizadorFotos({ visivel, fotos, indiceInicial, aoFechar }: V
 
   return (
     <Modal visible={visivel} animationType="fade" onRequestClose={aoFechar} statusBarTranslucent>
-      <View style={estilos.container}>
+      <View className="flex-1 bg-black">
         {visivel && (
           <FlatList
             data={fotos}
@@ -64,15 +63,16 @@ export function VisualizadorFotos({ visivel, fotos, indiceInicial, aoFechar }: V
         )}
 
         <Pressable
-          style={[estilos.botaoFechar, { top: topoSeguro + 12 }]}
+          className="absolute right-5 h-10 w-10 items-center justify-center rounded-full bg-white/15"
+          style={{ top: topoSeguro + 12 }}
           onPress={aoFechar}
           hitSlop={12}
         >
           <Feather name="x" size={24} color="#FFFFFF" />
         </Pressable>
 
-        <View style={[estilos.contador, { top: topoSeguro + 20 }]}>
-          <Text style={estilos.textoContador}>
+        <View className="absolute self-center" style={{ top: topoSeguro + 20 }}>
+          <Text className="text-sm font-semibold text-white">
             {indiceAtual + 1} / {fotos.length}
           </Text>
         </View>
@@ -81,28 +81,3 @@ export function VisualizadorFotos({ visivel, fotos, indiceInicial, aoFechar }: V
   );
 }
 
-const estilos = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000000',
-  },
-  botaoFechar: {
-    position: 'absolute',
-    right: 20,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  contador: {
-    position: 'absolute',
-    alignSelf: 'center',
-  },
-  textoContador: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-});

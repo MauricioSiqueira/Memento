@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Modal, Pressable, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather, Ionicons } from '@expo/vector-icons';
 
@@ -38,18 +38,16 @@ export function FolhaAcoes({ visivel, aoFechar, opcoes, titulo, alturaFracao = 0
 
   return (
     <Modal visible={visivel} transparent animationType="slide" onRequestClose={aoFechar}>
-      <Pressable style={estilos.fundo} onPress={aoFechar}>
+      <Pressable className="flex-1 justify-end bg-[#4A3A35]/40" onPress={aoFechar}>
         <Pressable
-          style={[
-            estilos.folha,
-            { height: alturaTela * alturaFracao, paddingBottom: espacamentoSeguro + 16 },
-          ]}
+          className="rounded-t-[28px] bg-white px-6 pt-3"
+          style={{ height: alturaTela * alturaFracao, paddingBottom: espacamentoSeguro + 16 }}
           onPress={() => {}}
         >
-          <View style={estilos.indicadorArraste} />
-          {titulo ? <Text style={estilos.titulo}>{titulo}</Text> : null}
+          <View className="mb-4 h-1 w-10 self-center rounded-full bg-memento-line" />
+          {titulo ? <Text className="mb-2 text-base font-bold text-memento-ink">{titulo}</Text> : null}
 
-          <View style={estilos.opcoes}>
+          <View className="flex-1 justify-center">
             {opcoes.map((opcao, indice) => (
               <Pressable
                 key={opcao.chave}
@@ -57,11 +55,8 @@ export function FolhaAcoes({ visivel, aoFechar, opcoes, titulo, alturaFracao = 0
                   aoFechar();
                   opcao.aoSelecionar();
                 }}
-                style={({ pressed }) => [
-                  estilos.linha,
-                  indice < opcoes.length - 1 && estilos.linhaComDivisor,
-                  pressed && estilos.linhaPressionada,
-                ]}
+                className={`flex-row items-center gap-4 py-4 ${indice < opcoes.length - 1 ? 'border-b border-memento-line' : ''}`}
+                style={({ pressed }) => pressed ? { backgroundColor: '#FAF5F2' } : undefined}
               >
                 {opcao.icone.familia === 'feather' ? (
                   <Feather
@@ -76,7 +71,7 @@ export function FolhaAcoes({ visivel, aoFechar, opcoes, titulo, alturaFracao = 0
                     color={opcao.destrutiva ? COR_DESTRUTIVA : COR_TEXTO}
                   />
                 )}
-                <Text style={[estilos.rotulo, opcao.destrutiva && estilos.rotuloDestrutivo]}>
+                <Text className={`text-base ${opcao.destrutiva ? 'text-memento-danger' : 'text-memento-ink'}`}>
                   {opcao.rotulo}
                 </Text>
               </Pressable>
@@ -87,56 +82,3 @@ export function FolhaAcoes({ visivel, aoFechar, opcoes, titulo, alturaFracao = 0
     </Modal>
   );
 }
-
-const estilos = StyleSheet.create({
-  fundo: {
-    flex: 1,
-    backgroundColor: 'rgba(74, 58, 53, 0.4)',
-    justifyContent: 'flex-end',
-  },
-  folha: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    paddingHorizontal: 24,
-    paddingTop: 12,
-  },
-  indicadorArraste: {
-    alignSelf: 'center',
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#EFEAE7',
-    marginBottom: 16,
-  },
-  titulo: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: COR_TEXTO,
-    marginBottom: 8,
-  },
-  opcoes: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  linha: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    paddingVertical: 16,
-  },
-  linhaComDivisor: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#EFEAE7',
-  },
-  linhaPressionada: {
-    backgroundColor: '#FAF5F2',
-  },
-  rotulo: {
-    fontSize: 16,
-    color: COR_TEXTO,
-  },
-  rotuloDestrutivo: {
-    color: COR_DESTRUTIVA,
-  },
-});

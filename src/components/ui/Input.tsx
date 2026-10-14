@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, TextInputProps, StyleSheet, TouchableOpacity, Text, ViewStyle, StyleProp } from 'react-native';
+import { View, TextInput, TextInputProps, TouchableOpacity, Text, ViewStyle, StyleProp } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 interface InputProps extends TextInputProps {
@@ -14,60 +14,25 @@ export function Input({ iconName, isPassword, mensagemErro, containerStyle, styl
   const temErro = Boolean(mensagemErro);
 
   return (
-    <View style={[styles.wrapper, containerStyle]}>
-      <View style={[styles.container, temErro && styles.containerComErro]}>
+    <View className="mb-4" style={containerStyle}>
+      <View className={`h-14 flex-row items-center rounded-2xl border bg-memento-canvas px-4 ${temErro ? 'border-memento-danger' : 'border-memento-line'}`}>
         {iconName && (
-          <Feather name={iconName} size={20} color="#4A3A35" style={styles.icon} />
+          <Feather name={iconName} size={20} color="#4A3A35" style={{ marginRight: 12 }} />
         )}
         <TextInput
-          style={[styles.input, style]}
+          className="flex-1 text-base text-memento-ink"
+          style={style}
           placeholderTextColor="#B0A6A4"
           secureTextEntry={isSecure}
           {...rest}
         />
         {isPassword && (
-          <TouchableOpacity onPress={() => setIsSecure(!isSecure)} style={styles.eyeIcon}>
+          <TouchableOpacity onPress={() => setIsSecure(!isSecure)} className="p-1" accessibilityRole="button" accessibilityLabel={isSecure ? 'Mostrar senha' : 'Ocultar senha'}>
             <Feather name={isSecure ? "eye-off" : "eye"} size={20} color="#4A3A35" />
           </TouchableOpacity>
         )}
       </View>
-      {temErro && <Text style={styles.textoErro}>{mensagemErro}</Text>}
+      {temErro && <Text className="ml-1 mt-1.5 text-xs text-memento-danger">{mensagemErro}</Text>}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    marginBottom: 16,
-  },
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FAF5F2',
-    borderWidth: 1,
-    borderColor: '#EFEAE7',
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    height: 56,
-  },
-  containerComErro: {
-    borderColor: '#E0637A',
-  },
-  icon: {
-    marginRight: 12,
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    color: '#4A3A35',
-  },
-  eyeIcon: {
-    padding: 4,
-  },
-  textoErro: {
-    color: '#E0637A',
-    fontSize: 12,
-    marginTop: 6,
-    marginLeft: 4,
-  },
-});

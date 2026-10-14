@@ -7,7 +7,7 @@ import {
   validarEmail,
   validarNomeUsuario,
   validarSenha,
-} from '@/utils/validacao';
+} from '@/features/auth/utils/validacao';
 
 export interface ValoresFormularioCadastro {
   nomeUsuario: string;

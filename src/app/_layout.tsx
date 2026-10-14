@@ -1,6 +1,8 @@
+import '@/global.css';
+
 import { Stack } from 'expo-router';
 
-import { AlbunsProvider } from '@/contexts/albuns-context';
+import { AlbunsProvider } from '@/features/albums/context/albuns-context';
 
 export default function RootLayout() {
   return (

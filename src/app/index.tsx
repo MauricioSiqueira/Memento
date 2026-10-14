@@ -4,7 +4,6 @@ import { Link, router } from "expo-router";
 import {
   KeyboardAvoidingView,
   Platform,
-  StyleSheet,
   Text,
   TouchableOpacity,
   useWindowDimensions,
@@ -20,9 +19,9 @@ export default function TelaInicial() {
   const { width: largura } = useWindowDimensions();
 
   return (
-    <SafeAreaView style={estilos.container} edges={["top", "bottom"]}>
+    <SafeAreaView className="flex-1 bg-memento-canvas" edges={["top", "bottom"]}>
       {/* Fundo Ondulado (Wave) fixo na parte inferior */}
-      <View style={estilos.containerOnda} pointerEvents="none">
+      <View className="absolute bottom-0 left-0 right-0 z-0" pointerEvents="none">
         <Svg
           height="120"
           width={largura}
@@ -38,53 +37,53 @@ export default function TelaInicial() {
       </View>
 
       <KeyboardAvoidingView
-        style={estilos.tecladoContainer}
+        className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <View style={estilos.conteudoPrincipal}>
+        <View className="flex-1 justify-center px-6">
           {/* Seção Gráfica do Cabeçalho */}
-          <View style={estilos.graficosCabecalho}>
+          <View className="relative z-10 mt-2 h-[180px] items-center justify-center">
             {/* Polaroid Esquerda */}
-            <View style={[estilos.polaroid, estilos.polaroidEsquerda]}>
+            <View className="absolute left-0 top-5 -rotate-12 bg-white p-2 pb-6 shadow-md">
               <Image
                 source="https://picsum.photos/seed/sunset/200/250"
-                style={estilos.imagemPolaroid}
+                style={{ width: 90, height: 110 }}
                 contentFit="cover"
               />
-              <Text style={estilos.florEsquerda}>🌸</Text>
+              <Text className="absolute -bottom-2 -left-3 text-[28px]">🌸</Text>
             </View>
 
             {/* Polaroid Direita */}
-            <View style={[estilos.polaroid, estilos.polaroidDireita]}>
-              <View style={estilos.fitaWashi} />
+            <View className="absolute right-0 top-10 rotate-12 bg-white p-2 pb-6 shadow-md">
+              <View className="absolute -right-1 top-[-10px] z-10 h-4 w-7 rotate-[30deg] bg-[#F6BFCF]/85" />
               <Image
                 source="https://picsum.photos/seed/field/200/250"
-                style={estilos.imagemPolaroid}
+                style={{ width: 90, height: 110 }}
                 contentFit="cover"
               />
-              <Text style={estilos.florDireita}>🌸</Text>
+              <Text className="absolute -bottom-1 -right-2 text-[28px]">🌸</Text>
             </View>
 
             {/* Nuvem e Coração Central */}
-            <View style={estilos.containerLogo}>
+            <View className="z-10 mt-5 items-center justify-center">
               <Ionicons name="cloud-outline" size={100} color="#4A3A35" />
-              <View style={estilos.containerCoracao}>
+              <View className="absolute top-11 rounded-2xl bg-memento-canvas p-1">
                 <Ionicons name="heart-outline" size={38} color="#F29CBA" />
               </View>
             </View>
           </View>
 
           {/* Textos */}
-          <View style={estilos.containerTexto}>
-            <Text style={estilos.titulo}>Guarde o que importa.</Text>
-            <Text style={estilos.subtitulo}>
+          <View className="z-10 mb-6 mt-5 items-center">
+            <Text className="mb-2 text-2xl font-bold text-memento-ink">Guarde o que importa.</Text>
+            <Text className="text-sm text-[#666666]">
               Compartilhe momentos. Crie{" "}
-              <Text style={estilos.destaqueSubtitulo}>memórias.</Text>
+              <Text className="font-bold text-memento-ink">memórias.</Text>
             </Text>
           </View>
 
           {/* Cartão do Formulário */}
-          <View style={estilos.cartao}>
+          <View className="z-10 rounded-3xl bg-white p-6 shadow-lg shadow-black/5">
             <Input
               iconName="mail"
               placeholder="E-mail"
@@ -93,183 +92,32 @@ export default function TelaInicial() {
             />
             <Input iconName="lock" placeholder="Senha" isPassword />
 
-            <TouchableOpacity style={estilos.containerEsqueceuSenha}>
-              <Text style={estilos.textoEsqueceuSenha}>
+            <TouchableOpacity className="mb-6 self-end">
+              <Text className="text-sm font-medium text-sky-500">
                 Esqueceu sua senha?
               </Text>
             </TouchableOpacity>
 
             <Button
               title="Entrar"
-              style={estilos.botaoEntrar}
+              className="mb-6"
               onPress={() => router.replace("/home")}
             />
 
-            <View style={estilos.containerRodape}>
-              <Text style={estilos.textoRodape}>Ainda não tem uma conta? </Text>
+            <View className="flex-row items-center justify-center">
+              <Text className="text-sm text-memento-muted">Ainda não tem uma conta? </Text>
               <Link href="/criar-conta" asChild>
                 <TouchableOpacity>
-                  <Text style={estilos.acaoRodape}>Criar conta</Text>
+                  <Text className="text-sm font-semibold text-sky-500">Criar conta</Text>
                 </TouchableOpacity>
               </Link>
             </View>
           </View>
 
           {/* Espaçador flexível para empurrar o conteúdo quando necessário */}
-          <View style={estilos.espacadorBase} />
+          <View className="h-5" />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
-
-const estilos = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FAF5F2",
-  },
-  tecladoContainer: {
-    flex: 1,
-  },
-  conteudoPrincipal: {
-    flex: 1,
-    paddingHorizontal: 24,
-    justifyContent: "center", // Centraliza o conteúdo verticalmente na tela
-  },
-  graficosCabecalho: {
-    height: 180,
-    marginTop: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-    zIndex: 1,
-  },
-  polaroid: {
-    position: "absolute",
-    backgroundColor: "#FFF",
-    padding: 8,
-    paddingBottom: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  polaroidEsquerda: {
-    left: 0,
-    top: 20,
-    transform: [{ rotate: "-12deg" }],
-  },
-  polaroidDireita: {
-    right: 0,
-    top: 40,
-    transform: [{ rotate: "12deg" }],
-  },
-  imagemPolaroid: {
-    width: 90,
-    height: 110,
-  },
-  florEsquerda: {
-    position: "absolute",
-    bottom: -10,
-    left: -14,
-    fontSize: 28,
-  },
-  florDireita: {
-    position: "absolute",
-    bottom: -6,
-    right: -10,
-    fontSize: 28,
-  },
-  fitaWashi: {
-    position: "absolute",
-    top: -10,
-    right: 10,
-    width: 28,
-    height: 16,
-    backgroundColor: "#F6BFCF",
-    opacity: 0.85,
-    transform: [{ rotate: "30deg" }],
-    zIndex: 2,
-  },
-  containerLogo: {
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 10,
-    marginTop: 20,
-  },
-  containerCoracao: {
-    position: "absolute",
-    top: 44,
-    backgroundColor: "#FAF5F2",
-    borderRadius: 20,
-    padding: 4,
-  },
-  containerTexto: {
-    alignItems: "center",
-    marginTop: 20,
-    marginBottom: 24,
-    zIndex: 1,
-  },
-  titulo: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#4A3A35",
-    marginBottom: 8,
-  },
-  subtitulo: {
-    fontSize: 14,
-    color: "#666666",
-  },
-  destaqueSubtitulo: {
-    color: "#4A3A35",
-    fontWeight: "700",
-  },
-  cartao: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 24,
-    padding: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.05,
-    shadowRadius: 20,
-    elevation: 5,
-    zIndex: 10,
-  },
-  containerEsqueceuSenha: {
-    alignSelf: "flex-end",
-    marginBottom: 24,
-  },
-  textoEsqueceuSenha: {
-    color: "#42A5F5",
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  botaoEntrar: {
-    marginBottom: 24,
-  },
-  containerRodape: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  textoRodape: {
-    color: "#6A5A55",
-    fontSize: 14,
-  },
-  acaoRodape: {
-    color: "#42A5F5",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  containerOnda: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 0, // Garante que fique atrás de todo o conteúdo
-  },
-  espacadorBase: {
-    height: 20, // Dá uma pequena margem inferior para o cartão não encostar no rodapé
-  },
-});

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { FlatList, Share, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import { FlatList, Share, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 
-import { ModalQrCodeAlbum } from '@/components/albuns/ModalQrCodeAlbum';
-import { VisualizadorFotos } from '@/components/albuns/VisualizadorFotos';
+import { ModalQrCodeAlbum } from '@/features/albums/components/ModalQrCodeAlbum';
+import { VisualizadorFotos } from '@/features/albums/components/VisualizadorFotos';
 import { FolhaAcoes, type OpcaoFolhaAcoes } from '@/components/ui/FolhaAcoes';
-import { useAlbuns } from '@/contexts/albuns-context';
+import { useAlbuns } from '@/features/albums/context/albuns-context';
 
 const NUMERO_COLUNAS = 3;
 const ESPACAMENTO = 4;
@@ -61,13 +61,13 @@ export default function TelaAlbum() {
     : [];
 
   return (
-    <SafeAreaView style={estilos.container} edges={['top']}>
-      <View style={estilos.cabecalho}>
+    <SafeAreaView className="flex-1 bg-memento-canvas" edges={['top']}>
+      <View className="flex-row items-center justify-between gap-4 px-6 pb-4 pt-2">
         <TouchableOpacity onPress={() => router.back()} hitSlop={12}>
           <Feather name="arrow-left" size={22} color="#4A3A35" />
         </TouchableOpacity>
 
-        <Text style={estilos.titulo} numberOfLines={1}>
+        <Text className="flex-1 text-center text-lg font-bold text-memento-ink" numberOfLines={1}>
           {album?.nome ?? 'Álbum'}
         </Text>
 
@@ -76,31 +76,31 @@ export default function TelaAlbum() {
             <Feather name="more-horizontal" size={22} color="#4A3A35" />
           </TouchableOpacity>
         ) : (
-          <View style={estilos.espacoCabecalho} />
+          <View className="w-[22px]" />
         )}
       </View>
 
       {!album ? (
-        <View style={estilos.containerVazio}>
-          <Text style={estilos.textoVazio}>Este álbum não foi encontrado.</Text>
+        <View className="flex-1 items-center justify-center gap-3 px-8">
+          <Text className="text-center text-sm text-memento-muted">Este álbum não foi encontrado.</Text>
         </View>
       ) : album.fotos.length === 0 ? (
-        <View style={estilos.containerVazio}>
+        <View className="flex-1 items-center justify-center gap-3 px-8">
           <Feather name="image" size={40} color="#B0A6A4" />
-          <Text style={estilos.textoVazio}>Este álbum ainda não tem fotos.</Text>
+          <Text className="text-center text-sm text-memento-muted">Este álbum ainda não tem fotos.</Text>
         </View>
       ) : (
         <FlatList
           data={album.fotos}
           keyExtractor={(uri, indice) => `${uri}-${indice}`}
           numColumns={NUMERO_COLUNAS}
-          contentContainerStyle={estilos.grade}
-          columnWrapperStyle={estilos.linhaGrade}
+          contentContainerClassName="px-1 pb-8"
+          columnWrapperStyle={{ gap: ESPACAMENTO, marginBottom: ESPACAMENTO }}
           renderItem={({ item, index }) => (
             <TouchableOpacity activeOpacity={0.85} onPress={() => setIndiceFotoAberta(index)}>
               <Image
                 source={item}
-                style={[estilos.foto, { width: tamanhoFoto, height: tamanhoFoto }]}
+                style={{ width: tamanhoFoto, height: tamanhoFoto, borderRadius: 8, backgroundColor: '#EFEAE7' }}
                 contentFit="cover"
               />
             </TouchableOpacity>
@@ -136,53 +136,3 @@ export default function TelaAlbum() {
     </SafeAreaView>
   );
 }
-
-const estilos = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FAF5F2',
-  },
-  cabecalho: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingTop: 8,
-    paddingBottom: 16,
-    gap: 16,
-  },
-  titulo: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#4A3A35',
-  },
-  espacoCabecalho: {
-    width: 22,
-  },
-  containerVazio: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    paddingHorizontal: 32,
-  },
-  textoVazio: {
-    color: '#6A5A55',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  grade: {
-    paddingHorizontal: ESPACAMENTO,
-    paddingBottom: 32,
-  },
-  linhaGrade: {
-    gap: ESPACAMENTO,
-    marginBottom: ESPACAMENTO,
-  },
-  foto: {
-    borderRadius: 8,
-    backgroundColor: '#EFEAE7',
-  },
-});
