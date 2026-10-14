@@ -2,13 +2,13 @@ import '@/global.css';
 
 import { Stack } from 'expo-router';
 
-import { AccessibilityProvider } from '@/contexts/accessibility-context';
+import { PreferencesProvider } from '@/contexts/preferences-context';
 import { AlbunsProvider } from '@/features/albums/context/albuns-context';
 
 export default function RootLayout() {
   return (
     <AlbunsProvider>
-      <AccessibilityProvider>
+      <PreferencesProvider>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="criar-conta" />
@@ -16,7 +16,7 @@ export default function RootLayout() {
           <Stack.Screen name="album/[id]" />
           <Stack.Screen name="criar-album" options={{ presentation: 'modal' }} />
         </Stack>
-      </AccessibilityProvider>
+      </PreferencesProvider>
     </AlbunsProvider>
   );
 }

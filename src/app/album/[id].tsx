@@ -10,6 +10,7 @@ import { ModalQrCodeAlbum } from '@/features/albums/components/ModalQrCodeAlbum'
 import { VisualizadorFotos } from '@/features/albums/components/VisualizadorFotos';
 import { FolhaAcoes, type OpcaoFolhaAcoes } from '@/components/ui/FolhaAcoes';
 import { useAlbuns } from '@/features/albums/context/albuns-context';
+import { usePreferences } from '@/contexts/preferences-context';
 
 const NUMERO_COLUNAS = 3;
 const ESPACAMENTO = 4;
@@ -17,6 +18,7 @@ const ESPACAMENTO = 4;
 export default function TelaAlbum() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { albuns, alternarFavorito } = useAlbuns();
+  const { temaEscuro } = usePreferences();
   const { width: larguraTela } = useWindowDimensions();
   const [indiceFotoAberta, setIndiceFotoAberta] = useState<number | null>(null);
   const [opcoesVisiveis, setOpcoesVisiveis] = useState(false);
@@ -62,19 +64,19 @@ export default function TelaAlbum() {
     : [];
 
   return (
-    <SafeAreaView className="flex-1 bg-memento-canvas" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-memento-canvas dark:bg-memento-canvas-dark" edges={['top']}>
       <View className="flex-row items-center justify-between gap-4 px-6 pb-4 pt-2">
         <TouchableOpacity onPress={() => router.back()} hitSlop={12}>
-          <Feather name="arrow-left" size={22} color="#4A3A35" />
+          <Feather name="arrow-left" size={22} color={temaEscuro ? '#FFF8F6' : '#4A3A35'} />
         </TouchableOpacity>
 
-        <AccessibleText className="flex-1 text-center text-lg font-bold text-memento-ink" numberOfLines={1}>
+        <AccessibleText className="flex-1 text-center text-lg font-bold text-memento-ink dark:text-memento-ink-dark" numberOfLines={1}>
           {album?.nome ?? 'Álbum'}
         </AccessibleText>
 
         {album ? (
           <TouchableOpacity onPress={() => setOpcoesVisiveis(true)} hitSlop={12}>
-            <Feather name="more-horizontal" size={22} color="#4A3A35" />
+            <Feather name="more-horizontal" size={22} color={temaEscuro ? '#FFF8F6' : '#4A3A35'} />
           </TouchableOpacity>
         ) : (
           <View className="w-[22px]" />
@@ -83,12 +85,12 @@ export default function TelaAlbum() {
 
       {!album ? (
         <View className="flex-1 items-center justify-center gap-3 px-8">
-          <AccessibleText className="text-center text-sm text-memento-muted">Este álbum não foi encontrado.</AccessibleText>
+          <AccessibleText className="text-center text-sm text-memento-muted dark:text-memento-muted-dark">Este álbum não foi encontrado.</AccessibleText>
         </View>
       ) : album.fotos.length === 0 ? (
         <View className="flex-1 items-center justify-center gap-3 px-8">
-          <Feather name="image" size={40} color="#B0A6A4" />
-          <AccessibleText className="text-center text-sm text-memento-muted">Este álbum ainda não tem fotos.</AccessibleText>
+          <Feather name="image" size={40} color={temaEscuro ? '#A99DA2' : '#B0A6A4'} />
+          <AccessibleText className="text-center text-sm text-memento-muted dark:text-memento-muted-dark">Este álbum ainda não tem fotos.</AccessibleText>
         </View>
       ) : (
         <FlatList
@@ -101,7 +103,7 @@ export default function TelaAlbum() {
             <TouchableOpacity activeOpacity={0.85} onPress={() => setIndiceFotoAberta(index)}>
               <Image
                 source={item}
-                style={{ width: tamanhoFoto, height: tamanhoFoto, borderRadius: 8, backgroundColor: '#EFEAE7' }}
+                style={{ width: tamanhoFoto, height: tamanhoFoto, borderRadius: 8, backgroundColor: temaEscuro ? '#40383C' : '#EFEAE7' }}
                 contentFit="cover"
               />
             </TouchableOpacity>

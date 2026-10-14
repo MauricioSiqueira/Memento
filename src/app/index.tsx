@@ -15,12 +15,14 @@ import Svg, { Path } from "react-native-svg";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { usePreferences } from "@/contexts/preferences-context";
 
 export default function TelaInicial() {
   const { width: largura } = useWindowDimensions();
+  const { temaEscuro } = usePreferences();
 
   return (
-    <SafeAreaView className="flex-1 bg-memento-canvas" edges={["top", "bottom"]}>
+    <SafeAreaView className="flex-1 bg-memento-canvas dark:bg-memento-canvas-dark" edges={["top", "bottom"]}>
       {/* Fundo Ondulado (Wave) fixo na parte inferior */}
       <View className="absolute bottom-0 left-0 right-0 z-0" pointerEvents="none">
         <Svg
@@ -30,7 +32,7 @@ export default function TelaInicial() {
           preserveAspectRatio="none"
         >
           <Path
-            fill="#FBE7E9"
+            fill={temaEscuro ? '#34252C' : '#FBE7E9'}
             fillOpacity="1"
             d="M0,256L48,261.3C96,267,192,277,288,272C384,267,480,245,576,240C672,235,768,245,864,250.7C960,256,1056,256,1152,240C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
           />
@@ -67,8 +69,8 @@ export default function TelaInicial() {
 
             {/* Nuvem e Coração Central */}
             <View className="z-10 mt-5 items-center justify-center">
-              <Ionicons name="cloud-outline" size={100} color="#4A3A35" />
-              <View className="absolute top-11 rounded-2xl bg-memento-canvas p-1">
+            <Ionicons name="cloud-outline" size={100} color={temaEscuro ? '#FFF8F6' : '#4A3A35'} />
+              <View className="absolute top-11 rounded-2xl bg-memento-canvas p-1 dark:bg-memento-canvas-dark">
                 <Ionicons name="heart-outline" size={38} color="#F29CBA" />
               </View>
             </View>
@@ -76,15 +78,15 @@ export default function TelaInicial() {
 
           {/* Textos */}
           <View className="z-10 mb-6 mt-5 items-center">
-            <AccessibleText className="mb-2 text-2xl font-bold text-memento-ink">Guarde o que importa.</AccessibleText>
-            <AccessibleText className="text-sm text-[#666666]">
+            <AccessibleText className="mb-2 text-2xl font-bold text-memento-ink dark:text-memento-ink-dark">Guarde o que importa.</AccessibleText>
+            <AccessibleText className="text-sm text-[#666666] dark:text-memento-muted-dark">
               Compartilhe momentos. Crie{" "}
-              <AccessibleText className="font-bold text-memento-ink">memórias.</AccessibleText>
+              <AccessibleText className="font-bold text-memento-ink dark:text-memento-ink-dark">memórias.</AccessibleText>
             </AccessibleText>
           </View>
 
           {/* Cartão do Formulário */}
-          <View className="z-10 rounded-3xl bg-white p-6 shadow-lg shadow-black/5">
+          <View className="z-10 rounded-3xl bg-white p-6 shadow-lg shadow-black/5 dark:bg-memento-surface-dark">
             <Input
               iconName="mail"
               placeholder="E-mail"
@@ -106,7 +108,7 @@ export default function TelaInicial() {
             />
 
             <View className="flex-row items-center justify-center">
-              <AccessibleText className="text-sm text-memento-muted">Ainda não tem uma conta? </AccessibleText>
+              <AccessibleText className="text-sm text-memento-muted dark:text-memento-muted-dark">Ainda não tem uma conta? </AccessibleText>
               <Link href="/criar-conta" asChild>
                 <TouchableOpacity>
                   <AccessibleText className="text-sm font-semibold text-sky-500">Criar conta</AccessibleText>

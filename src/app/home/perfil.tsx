@@ -17,7 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { FolhaAcoes, type OpcaoFolhaAcoes } from "@/components/ui/FolhaAcoes";
 import { Input } from "@/components/ui/Input";
-import { useAccessibilityPreferences } from "@/contexts/accessibility-context";
+import { usePreferences } from "@/contexts/preferences-context";
 
 const COR_SAIR = "#E0637A";
 
@@ -34,9 +34,8 @@ export default function TelaPersonalizacao() {
   const [nome, setNome] = useState("Usuária Memento");
   const [editandoNome, setEditandoNome] = useState(false);
   const [fotoPerfil, setFotoPerfil] = useState(AVATAR_PADRAO);
-  const [temaEscuro, setTemaEscuro] = useState(false);
   const [modoDaltonico, setModoDaltonico] = useState(false);
-  const { textoMaior, setTextoMaior } = useAccessibilityPreferences();
+  const { temaEscuro, setTemaEscuro, textoMaior, setTextoMaior } = usePreferences();
 
   const [folhaFotoVisivel, setFolhaFotoVisivel] = useState(false);
 
@@ -115,12 +114,12 @@ export default function TelaPersonalizacao() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-memento-canvas" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-memento-canvas dark:bg-memento-canvas-dark" edges={["top"]}>
       <ScrollView
         contentContainerClassName="px-6 pb-36 pt-6"
         showsVerticalScrollIndicator={false}
       >
-        <AccessibleText className="mb-6 text-[22px] font-bold text-memento-ink">
+        <AccessibleText className="mb-6 text-[22px] font-bold text-memento-ink dark:text-memento-ink-dark">
           Personalização
         </AccessibleText>
 
@@ -132,7 +131,7 @@ export default function TelaPersonalizacao() {
                 width: 96,
                 height: 96,
                 borderRadius: 48,
-                backgroundColor: "#EFEAE7",
+                backgroundColor: temaEscuro ? "#40383C" : "#EFEAE7",
               }}
               contentFit="cover"
             />
@@ -156,7 +155,7 @@ export default function TelaPersonalizacao() {
                 containerStyle={{ flex: 1, marginBottom: 0 }}
               />
               <TouchableOpacity onPress={() => setEditandoNome(false)}>
-                <AccessibleText className="text-sm font-semibold text-memento-accent">
+              <AccessibleText className="text-sm font-semibold text-memento-accent">
                   Salvar
                 </AccessibleText>
               </TouchableOpacity>
@@ -166,29 +165,32 @@ export default function TelaPersonalizacao() {
               className="mt-4 flex-row items-center justify-center gap-2"
               onPress={() => setEditandoNome(true)}
             >
-              <AccessibleText className="text-lg font-semibold text-memento-ink">
+              <AccessibleText className="text-lg font-semibold text-memento-ink dark:text-memento-ink-dark">
                 {nome}
               </AccessibleText>
-              <Feather name="edit-2" size={14} color="#8A7A75" />
+              <Feather name="edit-2" size={14} color={temaEscuro ? "#C9BCB8" : "#8A7A75"} />
             </TouchableOpacity>
           )}
         </View>
 
-        <View className="rounded-3xl bg-white px-5 shadow-lg shadow-black/5">
+        <View className="rounded-3xl bg-white px-5 shadow-lg shadow-black/5 dark:bg-memento-surface-dark">
           <LinhaConfiguracao
             titulo="Tema escuro"
             valor={temaEscuro}
             aoAlterar={setTemaEscuro}
+            temaEscuro={temaEscuro}
           />
           <LinhaConfiguracao
             titulo="Modo daltônico"
             valor={modoDaltonico}
             aoAlterar={setModoDaltonico}
+            temaEscuro={temaEscuro}
           />
           <LinhaConfiguracao
             titulo="Texto maior (acessibilidade)"
             valor={textoMaior}
             aoAlterar={setTextoMaior}
+            temaEscuro={temaEscuro}
             ultima
           />
         </View>
@@ -219,6 +221,7 @@ interface LinhaConfiguracaoProps {
   titulo: string;
   valor: boolean;
   aoAlterar: (valor: boolean) => void;
+  temaEscuro: boolean;
   ultima?: boolean;
 }
 
@@ -226,17 +229,18 @@ function LinhaConfiguracao({
   titulo,
   valor,
   aoAlterar,
+  temaEscuro,
   ultima,
 }: LinhaConfiguracaoProps) {
   return (
     <View
-      className={`flex-row items-center justify-between py-[18px] ${ultima ? "" : "border-b border-memento-line"}`}
+      className={`flex-row items-center justify-between py-[18px] ${ultima ? "" : "border-b border-memento-line dark:border-memento-line-dark"}`}
     >
-      <AccessibleText className="text-[15px] text-memento-ink">{titulo}</AccessibleText>
+      <AccessibleText className="text-[15px] text-memento-ink dark:text-memento-ink-dark">{titulo}</AccessibleText>
       <Switch
         value={valor}
         onValueChange={aoAlterar}
-        trackColor={{ false: "#EFEAE7", true: "#F29CBA" }}
+        trackColor={{ false: temaEscuro ? "#40383C" : "#EFEAE7", true: "#F29CBA" }}
         thumbColor="#FFFFFF"
       />
     </View>

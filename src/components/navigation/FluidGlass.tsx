@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { FolhaAcoes } from '@/components/ui/FolhaAcoes';
 import { criarOpcoesNovoAlbum } from '@/utils/opcoes-criar-album';
+import { usePreferences } from '@/contexts/preferences-context';
 
 type NomeIcone = keyof typeof Ionicons.glyphMap;
 
@@ -42,6 +43,7 @@ const COR_INATIVA = '#B0A6A4';
 /** Barra de navegação inferior flutuante com efeito de vidro líquido (iOS 26+, com fallback nas demais plataformas). */
 export default function FluidGlass({ state, navigation, insets }: FluidGlassProps) {
   const vidroNativoDisponivel = Platform.OS === 'ios' && isLiquidGlassAvailable();
+  const { temaEscuro } = usePreferences();
   const [folhaCriarVisivel, setFolhaCriarVisivel] = useState(false);
   const opcoesCriarAlbum = useMemo(() => criarOpcoesNovoAlbum(), []);
 
@@ -62,10 +64,10 @@ export default function FluidGlass({ state, navigation, insets }: FluidGlassProp
             borderRadius: 32,
           },
           !vidroNativoDisponivel && {
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            backgroundColor: temaEscuro ? 'rgba(37, 33, 36, 0.94)' : 'rgba(255, 255, 255, 0.9)',
             borderWidth: 1,
-            borderColor: '#EFEAE7',
-            shadowColor: '#4A3A35',
+            borderColor: temaEscuro ? '#40383C' : '#EFEAE7',
+            shadowColor: temaEscuro ? '#000000' : '#4A3A35',
             shadowOffset: { width: 0, height: 8 },
             shadowOpacity: 0.15,
             shadowRadius: 16,
@@ -111,7 +113,7 @@ export default function FluidGlass({ state, navigation, insets }: FluidGlassProp
               <Ionicons
                 name={emFoco ? icones.ativo : icones.inativo}
                 size={24}
-                color={emFoco ? COR_ATIVA : COR_INATIVA}
+                color={emFoco ? (temaEscuro ? '#FFF8F6' : COR_ATIVA) : (temaEscuro ? '#A99DA2' : COR_INATIVA)}
               />
             </Pressable>
           );

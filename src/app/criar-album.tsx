@@ -8,9 +8,11 @@ import { AccessibleText } from '@/components/ui/AccessibleText';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAlbuns } from '@/features/albums/context/albuns-context';
+import { usePreferences } from '@/contexts/preferences-context';
 
 export default function TelaCriarAlbum() {
   const { criarAlbum } = useAlbuns();
+  const { temaEscuro } = usePreferences();
   const [nomeAlbum, setNomeAlbum] = useState('');
 
   function aoConfirmarNomeAlbum() {
@@ -21,16 +23,16 @@ export default function TelaCriarAlbum() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-memento-canvas" edges={['top', 'bottom']}>
+    <SafeAreaView className="flex-1 bg-memento-canvas dark:bg-memento-canvas-dark" edges={['top', 'bottom']}>
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View className="flex-row items-center justify-between px-6 pb-4 pt-2">
           <TouchableOpacity onPress={() => router.back()} hitSlop={12} accessibilityRole="button" accessibilityLabel="Fechar">
-            <Feather name="x" size={22} color="#4A3A35" />
+            <Feather name="x" size={22} color={temaEscuro ? '#FFF8F6' : '#4A3A35'} />
           </TouchableOpacity>
-          <AccessibleText className="text-lg font-bold text-memento-ink">Novo álbum</AccessibleText>
+          <AccessibleText className="text-lg font-bold text-memento-ink dark:text-memento-ink-dark">Novo álbum</AccessibleText>
           <View className="w-[22px]" />
         </View>
 

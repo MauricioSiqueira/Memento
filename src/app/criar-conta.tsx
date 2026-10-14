@@ -14,8 +14,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { FormularioCadastro } from "@/features/auth/components/FormularioCadastro";
 import type { ValoresFormularioCadastro } from "@/features/auth/hooks/use-formulario-cadastro";
+import { usePreferences } from "@/contexts/preferences-context";
 
 export default function TelaCriarConta() {
+  const { temaEscuro } = usePreferences();
   async function aoCadastrar(valores: ValoresFormularioCadastro) {
     Alert.alert("Conta criada", `Bem-vindo(a), ${valores.nomeUsuario}!`, [
       { text: "OK", onPress: () => router.replace("/") },
@@ -23,7 +25,7 @@ export default function TelaCriarConta() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-memento-canvas" edges={["top", "bottom"]}>
+    <SafeAreaView className="flex-1 bg-memento-canvas dark:bg-memento-canvas-dark" edges={["top", "bottom"]}>
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -38,25 +40,25 @@ export default function TelaCriarConta() {
             onPress={() => router.back()}
             hitSlop={12}
           >
-            <Feather name="arrow-left" size={22} color="#4A3A35" />
+            <Feather name="arrow-left" size={22} color={temaEscuro ? '#FFF8F6' : '#4A3A35'} />
           </TouchableOpacity>
 
           <View className="mb-6 mt-3">
-            <AccessibleText className="mb-2 text-2xl font-bold text-memento-ink">Crie sua conta</AccessibleText>
-            <AccessibleText className="text-sm leading-5 text-[#666666]">
+            <AccessibleText className="mb-2 text-2xl font-bold text-memento-ink dark:text-memento-ink-dark">Crie sua conta</AccessibleText>
+            <AccessibleText className="text-sm leading-5 text-[#666666] dark:text-memento-muted-dark">
               Preencha os dados abaixo para começar a{" "}
-              <AccessibleText className="font-bold text-memento-ink">
+              <AccessibleText className="font-bold text-memento-ink dark:text-memento-ink-dark">
                 guardar suas memórias.
               </AccessibleText>
             </AccessibleText>
           </View>
 
-          <View className="rounded-3xl bg-white p-6 shadow-lg shadow-black/5">
+          <View className="rounded-3xl bg-white p-6 shadow-lg shadow-black/5 dark:bg-memento-surface-dark">
             <FormularioCadastro aoCadastrar={aoCadastrar} />
           </View>
 
           <View className="mt-6 flex-row items-center justify-center">
-            <AccessibleText className="text-sm text-memento-muted">Já tem uma conta? </AccessibleText>
+            <AccessibleText className="text-sm text-memento-muted dark:text-memento-muted-dark">Já tem uma conta? </AccessibleText>
             <TouchableOpacity onPress={() => router.back()}>
               <AccessibleText className="text-sm font-semibold text-sky-500">Entrar</AccessibleText>
             </TouchableOpacity>

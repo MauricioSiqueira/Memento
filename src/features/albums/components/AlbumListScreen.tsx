@@ -32,14 +32,14 @@ export function AlbumListScreen({
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-memento-canvas" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-memento-canvas dark:bg-memento-canvas-dark" edges={['top']}>
       <ScrollView
         ref={scrollRef}
         className="flex-1"
         contentContainerClassName="items-center px-6 pb-36 pt-6"
         showsVerticalScrollIndicator={false}
       >
-        <AccessibleText className="mb-5 self-start text-[22px] font-bold text-memento-ink">{title}</AccessibleText>
+        <AccessibleText className="mb-5 self-start text-[22px] font-bold text-memento-ink dark:text-memento-ink-dark">{title}</AccessibleText>
 
         {albums.length > 0 ? (
           <View className="w-full gap-4">
@@ -48,7 +48,7 @@ export function AlbumListScreen({
             ))}
           </View>
         ) : (
-          <AccessibleText className="mt-10 text-center text-sm text-memento-muted">{emptyMessage}</AccessibleText>
+          <AccessibleText className="mt-10 text-center text-sm text-memento-muted dark:text-memento-muted-dark">{emptyMessage}</AccessibleText>
         )}
 
         {onAddAlbum && (

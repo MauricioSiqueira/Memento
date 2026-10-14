@@ -14,7 +14,7 @@ interface AlbumCardProps {
 
 export function AlbumCard({ album, aoAlternarFavorito }: AlbumCardProps) {
   return (
-    <Pressable className="relative aspect-[2/1] w-full overflow-hidden rounded-[20px] bg-memento-line" onPress={() => router.push(`/album/${album.id}`)}>
+    <Pressable className="relative aspect-[2/1] w-full overflow-hidden rounded-[20px] bg-memento-line dark:bg-memento-line-dark" onPress={() => router.push(`/album/${album.id}`)}>
       <Image source={album.capa} style={{ width: '100%', height: '100%' }} contentFit="cover" />
 
       <TouchableOpacity

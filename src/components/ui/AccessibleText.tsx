@@ -1,6 +1,6 @@
 import { StyleSheet, Text as NativeText, type TextProps, type TextStyle } from 'react-native';
 
-import { useAccessibilityPreferences } from '@/contexts/accessibility-context';
+import { usePreferences } from '@/contexts/preferences-context';
 
 const TAMANHOS_MAIORES: Record<string, string> = {
   'text-xs': 'text-sm',
@@ -22,7 +22,7 @@ interface AccessibleTextProps extends TextProps {
 }
 
 export function AccessibleText({ className, style, ...props }: AccessibleTextProps) {
-  const { textoMaior } = useAccessibilityPreferences();
+  const { textoMaior } = usePreferences();
   const classesAcessiveis = textoMaior
     ? className?.split(/\s+/).map((classe) => TAMANHOS_MAIORES[classe] ?? classe).join(' ')
     : className;

@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   presets: [require('nativewind/preset')],
   safelist: [
@@ -28,6 +29,12 @@ module.exports = {
           line: '#EFEAE7',
           placeholder: '#B0A6A4',
           danger: '#E0637A',
+          'canvas-dark': '#181517',
+          'surface-dark': '#252124',
+          'ink-dark': '#FFF8F6',
+          'muted-dark': '#C9BCB8',
+          'line-dark': '#40383C',
+          'placeholder-dark': '#A99DA2',
         },
       },
     },
