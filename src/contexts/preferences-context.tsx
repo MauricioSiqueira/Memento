@@ -7,6 +7,8 @@ interface AppPreferences {
   setTemaEscuro: (ativo: boolean) => void;
   textoMaior: boolean;
   setTextoMaior: (ativo: boolean) => void;
+  modoDaltonico: boolean;
+  setModoDaltonico: (ativo: boolean) => void;
 }
 
 const PreferencesContext = createContext<AppPreferences | null>(null);
@@ -14,6 +16,7 @@ const PreferencesContext = createContext<AppPreferences | null>(null);
 export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [temaEscuro, setTemaEscuroState] = useState(false);
   const [textoMaior, setTextoMaior] = useState(false);
+  const [modoDaltonico, setModoDaltonico] = useState(false);
 
   const setTemaEscuro = useCallback((ativo: boolean) => {
     setTemaEscuroState(ativo);
@@ -25,8 +28,8 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   }, [temaEscuro]);
 
   const value = useMemo(
-    () => ({ temaEscuro, setTemaEscuro, textoMaior, setTextoMaior }),
-    [temaEscuro, setTemaEscuro, textoMaior]
+    () => ({ temaEscuro, setTemaEscuro, textoMaior, setTextoMaior, modoDaltonico, setModoDaltonico }),
+    [temaEscuro, setTemaEscuro, textoMaior, modoDaltonico]
   );
 
   return (

@@ -34,8 +34,7 @@ export default function TelaPersonalizacao() {
   const [nome, setNome] = useState("Usuária Memento");
   const [editandoNome, setEditandoNome] = useState(false);
   const [fotoPerfil, setFotoPerfil] = useState(AVATAR_PADRAO);
-  const [modoDaltonico, setModoDaltonico] = useState(false);
-  const { temaEscuro, setTemaEscuro, textoMaior, setTextoMaior } = usePreferences();
+  const { temaEscuro, setTemaEscuro, textoMaior, setTextoMaior, modoDaltonico, setModoDaltonico } = usePreferences();
 
   const [folhaFotoVisivel, setFolhaFotoVisivel] = useState(false);
 
@@ -136,7 +135,7 @@ export default function TelaPersonalizacao() {
               contentFit="cover"
             />
             <TouchableOpacity
-              className="absolute bottom-0 right-0 h-[30px] w-[30px] items-center justify-center rounded-full border-2 border-memento-canvas bg-memento-accent"
+              className={`absolute bottom-0 right-0 h-[30px] w-[30px] items-center justify-center rounded-full border-2 border-memento-canvas ${modoDaltonico ? 'bg-memento-accessible-accent' : 'bg-memento-accent'}`}
               onPress={() => setFolhaFotoVisivel(true)}
               hitSlop={8}
               accessibilityRole="button"
@@ -155,7 +154,7 @@ export default function TelaPersonalizacao() {
                 containerStyle={{ flex: 1, marginBottom: 0 }}
               />
               <TouchableOpacity onPress={() => setEditandoNome(false)}>
-              <AccessibleText className="text-sm font-semibold text-memento-accent">
+              <AccessibleText className={`text-sm font-semibold ${modoDaltonico ? 'text-memento-accessible-accent' : 'text-memento-accent'}`}>
                   Salvar
                 </AccessibleText>
               </TouchableOpacity>
@@ -185,7 +184,13 @@ export default function TelaPersonalizacao() {
             valor={modoDaltonico}
             aoAlterar={setModoDaltonico}
             temaEscuro={temaEscuro}
+            modoDaltonico={modoDaltonico}
           />
+          {modoDaltonico && (
+            <AccessibleText className="-mt-2 border-b border-memento-line pb-4 pr-10 text-xs text-memento-muted dark:border-memento-line-dark dark:text-memento-muted-dark">
+              Usa azul nas ações e laranja nos avisos, com ícones e rótulos para reforçar a diferença.
+            </AccessibleText>
+          )}
           <LinhaConfiguracao
             titulo="Texto maior (acessibilidade)"
             valor={textoMaior}
@@ -199,8 +204,8 @@ export default function TelaPersonalizacao() {
           className="mt-6 flex-row items-center justify-center gap-2 py-4"
           onPress={aoSairDaConta}
         >
-          <Feather name="log-out" size={18} color={COR_SAIR} />
-          <AccessibleText className="text-[15px] font-semibold text-memento-danger">
+          <Feather name="log-out" size={18} color={modoDaltonico ? '#A33A00' : COR_SAIR} />
+          <AccessibleText className={`text-[15px] font-semibold ${modoDaltonico ? 'text-memento-accessible-danger' : 'text-memento-danger'}`}>
             Sair da conta
           </AccessibleText>
         </TouchableOpacity>
@@ -222,6 +227,7 @@ interface LinhaConfiguracaoProps {
   valor: boolean;
   aoAlterar: (valor: boolean) => void;
   temaEscuro: boolean;
+  modoDaltonico?: boolean;
   ultima?: boolean;
 }
 
@@ -230,6 +236,7 @@ function LinhaConfiguracao({
   valor,
   aoAlterar,
   temaEscuro,
+  modoDaltonico = false,
   ultima,
 }: LinhaConfiguracaoProps) {
   return (
@@ -240,8 +247,10 @@ function LinhaConfiguracao({
       <Switch
         value={valor}
         onValueChange={aoAlterar}
-        trackColor={{ false: temaEscuro ? "#40383C" : "#EFEAE7", true: "#F29CBA" }}
+        trackColor={{ false: temaEscuro ? "#40383C" : "#EFEAE7", true: modoDaltonico ? "#005A9C" : "#F29CBA" }}
         thumbColor="#FFFFFF"
+        accessibilityLabel={titulo}
+        accessibilityState={{ checked: valor }}
       />
     </View>
   );

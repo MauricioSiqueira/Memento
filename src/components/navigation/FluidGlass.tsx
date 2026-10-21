@@ -43,7 +43,7 @@ const COR_INATIVA = '#B0A6A4';
 /** Barra de navegação inferior flutuante com efeito de vidro líquido (iOS 26+, com fallback nas demais plataformas). */
 export default function FluidGlass({ state, navigation, insets }: FluidGlassProps) {
   const vidroNativoDisponivel = Platform.OS === 'ios' && isLiquidGlassAvailable();
-  const { temaEscuro } = usePreferences();
+  const { temaEscuro, modoDaltonico } = usePreferences();
   const [folhaCriarVisivel, setFolhaCriarVisivel] = useState(false);
   const opcoesCriarAlbum = useMemo(() => criarOpcoesNovoAlbum(), []);
 
@@ -87,7 +87,7 @@ export default function FluidGlass({ state, navigation, insets }: FluidGlassProp
                 hitSlop={8}
                 className="h-full flex-1 items-center justify-center"
               >
-                <View className="h-11 w-11 items-center justify-center rounded-full bg-memento-accent">
+                <View className={`h-11 w-11 items-center justify-center rounded-full ${modoDaltonico ? 'bg-memento-accessible-accent' : 'bg-memento-accent'}`}>
                   <Ionicons name="add" size={26} color="#FFFFFF" />
                 </View>
               </Pressable>

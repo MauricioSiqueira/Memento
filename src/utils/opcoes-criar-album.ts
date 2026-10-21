@@ -1,4 +1,3 @@
-import { Alert } from 'react-native';
 import { router } from 'expo-router';
 
 import type { OpcaoFolhaAcoes } from '@/components/ui/FolhaAcoes';
@@ -10,11 +9,7 @@ export function criarOpcoesNovoAlbum(): OpcaoFolhaAcoes[] {
       chave: 'escanear-qrcode',
       rotulo: 'Escanear QR Code',
       icone: { familia: 'feather', nome: 'camera' },
-      aoSelecionar: () =>
-        Alert.alert(
-          'Escanear QR Code',
-          'A leitura de QR Code para entrar em um álbum compartilhado ainda não está disponível.'
-        ),
+      aoSelecionar: () => router.push('/scanner'),
     },
     {
       chave: 'novo-album',

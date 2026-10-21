@@ -14,6 +14,7 @@ export default function RootLayout() {
           <Stack.Screen name="criar-conta" />
           <Stack.Screen name="home" />
           <Stack.Screen name="album/[id]" />
+          <Stack.Screen name="scanner" options={{ presentation: 'fullScreenModal' }} />
           <Stack.Screen name="criar-album" options={{ presentation: 'modal' }} />
         </Stack>
       </PreferencesProvider>

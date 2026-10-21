@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { AccessibleText } from '@/components/ui/AccessibleText';
 import { AlbumCard } from './AlbumCard';
 import type { Album } from '@/features/albums/context/albuns-context';
+import { usePreferences } from '@/contexts/preferences-context';
 
 interface AlbumListScreenProps {
   title: string;
@@ -23,6 +24,7 @@ export function AlbumListScreen({
   emptyMessage,
   onAddAlbum,
 }: AlbumListScreenProps) {
+  const { modoDaltonico } = usePreferences();
   const scrollRef = useRef<ScrollView>(null);
 
   useFocusEffect(
@@ -53,7 +55,7 @@ export function AlbumListScreen({
 
         {onAddAlbum && (
           <TouchableOpacity
-            className="mt-7 h-14 w-14 items-center justify-center rounded-full bg-memento-accent"
+            className={`mt-7 h-14 w-14 items-center justify-center rounded-full ${modoDaltonico ? 'bg-memento-accessible-accent' : 'bg-memento-accent'}`}
             onPress={onAddAlbum}
             activeOpacity={0.85}
             accessibilityRole="button"

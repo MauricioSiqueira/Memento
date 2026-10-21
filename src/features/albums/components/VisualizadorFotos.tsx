@@ -19,10 +19,11 @@ interface VisualizadorFotosProps {
   fotos: string[];
   indiceInicial: number;
   aoFechar: () => void;
+  aoRemover: (indice: number) => void;
 }
 
 /** Visualizador de fotos em tela cheia, com deslize horizontal entre as fotos do álbum. */
-export function VisualizadorFotos({ visivel, fotos, indiceInicial, aoFechar }: VisualizadorFotosProps) {
+export function VisualizadorFotos({ visivel, fotos, indiceInicial, aoFechar, aoRemover }: VisualizadorFotosProps) {
   const { width: larguraTela, height: alturaTela } = useWindowDimensions();
   const { top: topoSeguro } = useSafeAreaInsets();
   const [indiceAtual, setIndiceAtual] = useState(indiceInicial);
@@ -70,6 +71,17 @@ export function VisualizadorFotos({ visivel, fotos, indiceInicial, aoFechar }: V
           hitSlop={12}
         >
           <Feather name="x" size={24} color="#FFFFFF" />
+        </Pressable>
+
+        <Pressable
+          className="absolute left-5 h-10 w-10 items-center justify-center rounded-full bg-white/15"
+          style={{ top: topoSeguro + 12 }}
+          onPress={() => aoRemover(indiceAtual)}
+          hitSlop={12}
+          accessibilityRole="button"
+          accessibilityLabel="Remover esta foto do álbum"
+        >
+          <Feather name="trash-2" size={20} color="#FFFFFF" />
         </Pressable>
 
         <View className="absolute self-center" style={{ top: topoSeguro + 20 }}>

@@ -13,6 +13,8 @@ interface AlbunsContextValue {
   favoritos: Album[];
   alternarFavorito: (id: string) => void;
   criarAlbum: (nome: string) => void;
+  adicionarFotos: (id: string, fotos: string[]) => void;
+  removerFotos: (id: string, indices: number[]) => void;
 }
 
 const AlbunsContext = createContext<AlbunsContextValue | null>(null);
@@ -77,11 +79,37 @@ export function AlbunsProvider({ children }: { children: React.ReactNode }) {
     ]);
   }, []);
 
+  const adicionarFotos = useCallback((id: string, novasFotos: string[]) => {
+    if (novasFotos.length === 0) return;
+    setAlbuns((atuais) => atuais.map((album) => {
+      if (album.id !== id) return album;
+      return {
+        ...album,
+        fotos: [...album.fotos, ...novasFotos],
+        capa: album.fotos.length === 0 ? novasFotos[0] : album.capa,
+      };
+    }));
+  }, []);
+
+  const removerFotos = useCallback((id: string, indices: number[]) => {
+    const indicesRemovidos = new Set(indices);
+    if (indicesRemovidos.size === 0) return;
+    setAlbuns((atuais) => atuais.map((album) => {
+      if (album.id !== id) return album;
+      const fotos = album.fotos.filter((_, indice) => !indicesRemovidos.has(indice));
+      return {
+        ...album,
+        fotos,
+        capa: fotos[0] ?? `https://picsum.photos/seed/${encodeURIComponent(album.nome)}/400/400`,
+      };
+    }));
+  }, []);
+
   const favoritos = useMemo(() => albuns.filter((album) => album.favorito), [albuns]);
 
   const valor = useMemo(
-    () => ({ albuns, favoritos, alternarFavorito, criarAlbum }),
-    [albuns, favoritos, alternarFavorito, criarAlbum]
+    () => ({ albuns, favoritos, alternarFavorito, criarAlbum, adicionarFotos, removerFotos }),
+    [albuns, favoritos, alternarFavorito, criarAlbum, adicionarFotos, removerFotos]
   );
 
   return <AlbunsContext.Provider value={valor}>{children}</AlbunsContext.Provider>;

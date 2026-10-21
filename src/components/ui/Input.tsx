@@ -14,12 +14,12 @@ interface InputProps extends TextInputProps {
 
 export function Input({ iconName, isPassword, mensagemErro, containerStyle, style, ...rest }: InputProps) {
   const [isSecure, setIsSecure] = useState(isPassword);
-  const { textoMaior, temaEscuro } = usePreferences();
+  const { textoMaior, temaEscuro, modoDaltonico } = usePreferences();
   const temErro = Boolean(mensagemErro);
 
   return (
     <View className="mb-4" style={containerStyle}>
-      <View className={`h-14 flex-row items-center rounded-2xl border bg-memento-canvas px-4 dark:bg-memento-surface-dark ${temErro ? 'border-memento-danger' : 'border-memento-line dark:border-memento-line-dark'}`}>
+      <View className={`h-14 flex-row items-center rounded-2xl border bg-memento-canvas px-4 dark:bg-memento-surface-dark ${temErro ? (modoDaltonico ? 'border-memento-accessible-danger' : 'border-memento-danger') : 'border-memento-line dark:border-memento-line-dark'}`}>
         {iconName && (
           <Feather name={iconName} size={20} color={temaEscuro ? '#FFF8F6' : '#4A3A35'} style={{ marginRight: 12 }} />
         )}
@@ -36,7 +36,7 @@ export function Input({ iconName, isPassword, mensagemErro, containerStyle, styl
           </TouchableOpacity>
         )}
       </View>
-      {temErro && <AccessibleText className="ml-1 mt-1.5 text-xs text-memento-danger">{mensagemErro}</AccessibleText>}
+      {temErro && <AccessibleText className={`ml-1 mt-1.5 text-xs ${modoDaltonico ? 'text-memento-accessible-danger' : 'text-memento-danger'}`}>{mensagemErro}</AccessibleText>}
     </View>
   );
 }

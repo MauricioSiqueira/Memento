@@ -37,9 +37,18 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "O Memento precisa acessar suas fotos para você escolher uma imagem de perfil.",
-          "cameraPermission": "O Memento precisa acessar a câmera para você tirar uma foto de perfil.",
+          "photosPermission": "O Memento precisa acessar suas fotos para você adicioná-las aos álbuns.",
+          "cameraPermission": "O Memento precisa acessar a câmera para você tirar fotos para os álbuns.",
           "microphonePermission": false
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "O Memento precisa acessar a câmera para escanear QR Codes de álbuns.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": true
         }
       ]
     ],

@@ -35,6 +35,8 @@ module.exports = {
           'muted-dark': '#C9BCB8',
           'line-dark': '#40383C',
           'placeholder-dark': '#A99DA2',
+          'accessible-accent': '#005A9C',
+          'accessible-danger': '#A33A00',
         },
       },
     },
