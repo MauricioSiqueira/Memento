@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Link, router } from "expo-router";
+import { Link } from "expo-router";
+import { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -16,10 +17,39 @@ import Svg, { Path } from "react-native-svg";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { usePreferences } from "@/contexts/preferences-context";
+import { useAuth } from "@/features/auth/context/auth-context";
+import { validarEmail } from "@/features/auth/utils/validacao";
+import { mensagemDeErro } from "@/services/api/erros";
 
 export default function TelaInicial() {
   const { width: largura } = useWindowDimensions();
-  const { temaEscuro } = usePreferences();
+  const { temaEscuro, modoDaltonico } = usePreferences();
+  const { entrar } = useAuth();
+
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erroEmail, setErroEmail] = useState<string>();
+  const [erroSenha, setErroSenha] = useState<string>();
+  const [erroGeral, setErroGeral] = useState<string>();
+  const [entrando, setEntrando] = useState(false);
+
+  async function aoEntrar() {
+    const erroDoEmail = validarEmail(email) ?? undefined;
+    const erroDaSenha = senha ? undefined : "Informe sua senha.";
+    setErroEmail(erroDoEmail);
+    setErroSenha(erroDaSenha);
+    setErroGeral(undefined);
+    if (erroDoEmail || erroDaSenha) return;
+
+    setEntrando(true);
+    try {
+      // Ao autenticar, o layout raiz troca as rotas públicas pelas protegidas (vai para /home).
+      await entrar(email, senha);
+    } catch (erro) {
+      setErroGeral(mensagemDeErro(erro));
+      setEntrando(false);
+    }
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-memento-canvas dark:bg-memento-canvas-dark" edges={["top", "bottom"]}>
@@ -92,8 +122,26 @@ export default function TelaInicial() {
               placeholder="E-mail"
               keyboardType="email-address"
               autoCapitalize="none"
+              autoCorrect={false}
+              value={email}
+              onChangeText={(texto) => {
+                setEmail(texto);
+                setErroEmail(undefined);
+              }}
+              mensagemErro={erroEmail}
             />
-            <Input iconName="lock" placeholder="Senha" isPassword />
+            <Input
+              iconName="lock"
+              placeholder="Senha"
+              isPassword
+              value={senha}
+              onChangeText={(texto) => {
+                setSenha(texto);
+                setErroSenha(undefined);
+              }}
+              onSubmitEditing={aoEntrar}
+              mensagemErro={erroSenha}
+            />
 
             <TouchableOpacity className="mb-6 self-end">
               <AccessibleText className="text-sm font-medium text-sky-500">
@@ -101,11 +149,16 @@ export default function TelaInicial() {
               </AccessibleText>
             </TouchableOpacity>
 
-            <Button
-              title="Entrar"
-              className="mb-6"
-              onPress={() => router.replace("/home")}
-            />
+            {erroGeral && (
+              <AccessibleText
+                className={`mb-4 text-center text-sm ${modoDaltonico ? "text-memento-accessible-danger" : "text-memento-danger"}`}
+                accessibilityRole="alert"
+              >
+                {erroGeral}
+              </AccessibleText>
+            )}
+
+            <Button title="Entrar" className="mb-6" loading={entrando} onPress={aoEntrar} />
 
             <View className="flex-row items-center justify-center">
               <AccessibleText className="text-sm text-memento-muted dark:text-memento-muted-dark">Ainda não tem uma conta? </AccessibleText>

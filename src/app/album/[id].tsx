@@ -1,24 +1,28 @@
-import React, { useState } from 'react';
-import { Alert, FlatList, Linking, Share, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, FlatList, Linking, Share, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 
 import { AccessibleText } from '@/components/ui/AccessibleText';
+import { ImagemAutenticada } from '@/components/ui/ImagemAutenticada';
 import { ModalQrCodeAlbum } from '@/features/albums/components/ModalQrCodeAlbum';
 import { VisualizadorFotos } from '@/features/albums/components/VisualizadorFotos';
 import { FolhaAcoes, type OpcaoFolhaAcoes } from '@/components/ui/FolhaAcoes';
 import { useAlbuns } from '@/features/albums/context/albuns-context';
+import { useAlternarFavorito } from '@/features/albums/hooks/use-alternar-favorito';
 import { usePreferences } from '@/contexts/preferences-context';
+import type { ArquivoLocal } from '@/services/api/anexar-arquivo';
+import { mensagemDeErro } from '@/services/api/erros';
 
 const NUMERO_COLUNAS = 3;
 const ESPACAMENTO = 4;
 
 export default function TelaAlbum() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { albuns, alternarFavorito, adicionarFotos, removerFotos } = useAlbuns();
+  const { albuns, carregarAlbum, adicionarFotos, removerFotos, obterLinkConvite } = useAlbuns();
+  const alternarFavorito = useAlternarFavorito();
   const { temaEscuro } = usePreferences();
   const { width: larguraTela } = useWindowDimensions();
   const [indiceFotoAberta, setIndiceFotoAberta] = useState<number | null>(null);
@@ -27,10 +31,49 @@ export default function TelaAlbum() {
   const [adicionarFotoVisivel, setAdicionarFotoVisivel] = useState(false);
   const [modoSelecao, setModoSelecao] = useState(false);
   const [fotosSelecionadas, setFotosSelecionadas] = useState<number[]>([]);
+  const [carregandoAlbum, setCarregandoAlbum] = useState(true);
+  const [erroAlbum, setErroAlbum] = useState<string | null>(null);
+  const [processandoFotos, setProcessandoFotos] = useState(false);
+  const [linkConvite, setLinkConvite] = useState<string | null>(null);
+  const [erroConvite, setErroConvite] = useState<string | null>(null);
 
   const album = albuns.find((item) => item.id === id);
   const tamanhoFoto = (larguraTela - ESPACAMENTO * (NUMERO_COLUNAS + 1)) / NUMERO_COLUNAS;
-  const linkCompartilhavel = album ? `memento://album/${album.id}` : '';
+
+  useEffect(() => {
+    if (!id) return;
+    let ativo = true;
+    setCarregandoAlbum(true);
+    setErroAlbum(null);
+    setLinkConvite(null);
+    carregarAlbum(id)
+      .catch((erro) => ativo && setErroAlbum(mensagemDeErro(erro)))
+      .finally(() => ativo && setCarregandoAlbum(false));
+    return () => {
+      ativo = false;
+    };
+  }, [id, carregarAlbum]);
+
+  /** O link de convite vem da API (token permanente por álbum); é buscado sob demanda e reaproveitado. */
+  async function buscarLinkConvite(): Promise<string | null> {
+    if (!album) return null;
+    if (linkConvite) return linkConvite;
+    try {
+      const link = await obterLinkConvite(album.id);
+      setLinkConvite(link);
+      setErroConvite(null);
+      return link;
+    } catch (erro) {
+      setErroConvite(mensagemDeErro(erro));
+      return null;
+    }
+  }
+
+  function abrirQrCode() {
+    setErroConvite(null);
+    setQrCodeVisivel(true);
+    void buscarLinkConvite();
+  }
 
   function sairDaSelecao() {
     setModoSelecao(false);
@@ -46,6 +89,7 @@ export default function TelaAlbum() {
   function confirmarRemocao(indices: number[]) {
     if (!album || indices.length === 0) return;
     const quantidade = indices.length;
+    const arquivoIds = indices.map((indice) => album.fotos[indice]?.arquivoId).filter((arquivoId): arquivoId is string => Boolean(arquivoId));
     Alert.alert(
       quantidade === 1 ? 'Remover foto?' : `Remover ${quantidade} fotos?`,
       quantidade === 1
@@ -56,10 +100,18 @@ export default function TelaAlbum() {
         {
           text: 'Remover',
           style: 'destructive',
-          onPress: () => {
-            removerFotos(album.id, indices);
+          onPress: async () => {
             setIndiceFotoAberta(null);
             sairDaSelecao();
+            setProcessandoFotos(true);
+            const { removidas, erro } = await removerFotos(album.id, arquivoIds);
+            setProcessandoFotos(false);
+            if (erro) {
+              Alert.alert(
+                removidas === 0 ? 'Não foi possível remover' : 'Algumas fotos não foram removidas',
+                erro
+              );
+            }
           },
         },
       ]
@@ -77,6 +129,23 @@ export default function TelaAlbum() {
     );
   }
 
+  async function enviarFotos(albumId: string, assets: ImagePicker.ImagePickerAsset[]) {
+    const arquivos: ArquivoLocal[] = assets.map((foto) => ({
+      uri: foto.uri,
+      nome: foto.fileName,
+      tipo: foto.mimeType,
+    }));
+
+    setProcessandoFotos(true);
+    try {
+      await adicionarFotos(albumId, arquivos);
+    } catch (erro) {
+      Alert.alert('Não foi possível enviar as fotos', mensagemDeErro(erro));
+    } finally {
+      setProcessandoFotos(false);
+    }
+  }
+
   async function aoEscolherDaGaleria() {
     if (!album) return;
     try {
@@ -90,7 +159,7 @@ export default function TelaAlbum() {
         allowsMultipleSelection: true,
         quality: 0.85,
       });
-      if (!resultado.canceled) adicionarFotos(album.id, resultado.assets.map((foto) => foto.uri));
+      if (!resultado.canceled) await enviarFotos(album.id, resultado.assets);
     } catch {
       Alert.alert('Não foi possível abrir a galeria', 'Tente novamente em instantes.');
     }
@@ -105,7 +174,7 @@ export default function TelaAlbum() {
         return;
       }
       const resultado = await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], quality: 0.85 });
-      if (!resultado.canceled) adicionarFotos(album.id, resultado.assets.map((foto) => foto.uri));
+      if (!resultado.canceled) await enviarFotos(album.id, resultado.assets);
     } catch {
       Alert.alert('Não foi possível abrir a câmera', 'Tente novamente em instantes.');
     }
@@ -128,10 +197,15 @@ export default function TelaAlbum() {
 
   async function aoCompartilharAlbum() {
     if (!album) return;
+    const link = await buscarLinkConvite();
+    if (!link) {
+      Alert.alert('Não foi possível compartilhar', 'Não conseguimos gerar o convite agora. Tente novamente.');
+      return;
+    }
     try {
       await Share.share({
-        message: `Entre no álbum "${album.nome}" no Memento: ${linkCompartilhavel}`,
-        url: linkCompartilhavel,
+        message: `Entre no álbum "${album.nome}" no Memento: ${link}`,
+        url: link,
       });
     } catch {
       // Usuária cancelou o compartilhamento nativo; nada a fazer.
@@ -159,7 +233,7 @@ export default function TelaAlbum() {
           chave: 'qrcode',
           rotulo: 'QR Code',
           icone: { familia: 'ionicons', nome: 'qr-code-outline' },
-          aoSelecionar: () => setQrCodeVisivel(true),
+          aoSelecionar: abrirQrCode,
         },
         {
           chave: 'favoritar',
@@ -218,17 +292,31 @@ export default function TelaAlbum() {
 
       {!album ? (
         <View className="flex-1 items-center justify-center gap-3 px-8">
-          <AccessibleText className="text-center text-sm text-memento-muted dark:text-memento-muted-dark">Este álbum não foi encontrado.</AccessibleText>
+          {carregandoAlbum ? (
+            <ActivityIndicator />
+          ) : (
+            <AccessibleText className="text-center text-sm text-memento-muted dark:text-memento-muted-dark">
+              {erroAlbum ?? 'Este álbum não foi encontrado.'}
+            </AccessibleText>
+          )}
         </View>
       ) : album.fotos.length === 0 ? (
         <View className="flex-1 items-center justify-center gap-3 px-8">
-          <Feather name="image" size={40} color={temaEscuro ? '#A99DA2' : '#B0A6A4'} />
-          <AccessibleText className="text-center text-sm text-memento-muted dark:text-memento-muted-dark">Este álbum ainda não tem fotos.</AccessibleText>
+          {carregandoAlbum && !album.fotosCarregadas ? (
+            <ActivityIndicator />
+          ) : (
+            <>
+              <Feather name="image" size={40} color={temaEscuro ? '#A99DA2' : '#B0A6A4'} />
+              <AccessibleText className="text-center text-sm text-memento-muted dark:text-memento-muted-dark">
+                {erroAlbum ?? 'Este álbum ainda não tem fotos.'}
+              </AccessibleText>
+            </>
+          )}
         </View>
       ) : (
         <FlatList
           data={album.fotos}
-          keyExtractor={(uri, indice) => `${uri}-${indice}`}
+          keyExtractor={(foto) => foto.arquivoId}
           numColumns={NUMERO_COLUNAS}
           contentContainerClassName="px-1 pb-8"
           columnWrapperStyle={{ gap: ESPACAMENTO, marginBottom: ESPACAMENTO }}
@@ -244,8 +332,8 @@ export default function TelaAlbum() {
               accessibilityLabel={modoSelecao ? `Selecionar foto ${index + 1}` : `Abrir foto ${index + 1}`}
               accessibilityState={{ selected: fotosSelecionadas.includes(index) }}
             >
-              <Image
-                source={item}
+              <ImagemAutenticada
+                url={item.url}
                 style={{ width: tamanhoFoto, height: tamanhoFoto, borderRadius: 8, backgroundColor: temaEscuro ? '#40383C' : '#EFEAE7' }}
                 contentFit="cover"
               />
@@ -257,6 +345,12 @@ export default function TelaAlbum() {
             </TouchableOpacity>
           )}
         />
+      )}
+
+      {processandoFotos && (
+        <View className="absolute inset-0 items-center justify-center bg-black/30" pointerEvents="auto">
+          <ActivityIndicator size="large" color="#FFFFFF" />
+        </View>
       )}
 
       {album && (
@@ -288,7 +382,8 @@ export default function TelaAlbum() {
           <ModalQrCodeAlbum
             visivel={qrCodeVisivel}
             nomeAlbum={album.nome}
-            link={linkCompartilhavel}
+            link={linkConvite}
+            erro={erroConvite}
             aoFechar={() => setQrCodeVisivel(false)}
           />
         </>

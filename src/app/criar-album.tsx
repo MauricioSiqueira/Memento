@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, TouchableOpacity, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
@@ -9,17 +9,26 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAlbuns } from '@/features/albums/context/albuns-context';
 import { usePreferences } from '@/contexts/preferences-context';
+import { mensagemDeErro } from '@/services/api/erros';
 
 export default function TelaCriarAlbum() {
   const { criarAlbum } = useAlbuns();
   const { temaEscuro } = usePreferences();
   const [nomeAlbum, setNomeAlbum] = useState('');
+  const [criando, setCriando] = useState(false);
 
-  function aoConfirmarNomeAlbum() {
+  async function aoConfirmarNomeAlbum() {
     const nome = nomeAlbum.trim();
-    if (!nome) return;
-    criarAlbum(nome);
-    router.back();
+    if (!nome || criando) return;
+
+    setCriando(true);
+    try {
+      await criarAlbum(nome);
+      router.back();
+    } catch (erro) {
+      Alert.alert('Não foi possível criar o álbum', mensagemDeErro(erro));
+      setCriando(false);
+    }
   }
 
   return (
@@ -37,8 +46,8 @@ export default function TelaCriarAlbum() {
         </View>
 
         <View className="gap-4 px-6">
-          <Input placeholder="Nome do álbum" value={nomeAlbum} onChangeText={setNomeAlbum} autoFocus />
-          <Button title="Criar álbum" onPress={aoConfirmarNomeAlbum} />
+          <Input placeholder="Nome do álbum" value={nomeAlbum} onChangeText={setNomeAlbum} onSubmitEditing={aoConfirmarNomeAlbum} autoFocus />
+          <Button title="Criar álbum" loading={criando} onPress={aoConfirmarNomeAlbum} />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

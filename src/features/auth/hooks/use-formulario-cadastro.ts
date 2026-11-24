@@ -17,8 +17,8 @@ export interface ValoresFormularioCadastro {
   dataNascimento: string;
 }
 
-type CampoFormularioCadastro = keyof ValoresFormularioCadastro;
-type ErrosFormularioCadastro = Partial<Record<CampoFormularioCadastro, string>>;
+export type CampoFormularioCadastro = keyof ValoresFormularioCadastro;
+export type ErrosFormularioCadastro = Partial<Record<CampoFormularioCadastro, string>>;
 
 const VALORES_INICIAIS: ValoresFormularioCadastro = {
   nomeUsuario: '',
@@ -55,7 +55,8 @@ function validarCampo(
 }
 
 interface OpcoesFormularioCadastro {
-  aoCadastrar: (valores: ValoresFormularioCadastro) => void | Promise<void>;
+  /** Pode devolver erros por campo (ex.: e-mail já em uso) para serem exibidos no formulário. */
+  aoCadastrar: (valores: ValoresFormularioCadastro) => void | ErrosFormularioCadastro | Promise<void | ErrosFormularioCadastro>;
 }
 
 export function useFormularioCadastro({ aoCadastrar }: OpcoesFormularioCadastro) {
@@ -82,7 +83,8 @@ export function useFormularioCadastro({ aoCadastrar }: OpcoesFormularioCadastro)
 
     setEnviando(true);
     try {
-      await aoCadastrar(valores);
+      const errosDoServidor = await aoCadastrar(valores);
+      if (errosDoServidor) setErros(errosDoServidor);
     } finally {
       setEnviando(false);
     }

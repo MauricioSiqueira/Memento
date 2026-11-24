@@ -22,4 +22,23 @@ npm install
 npx expo start
 ```
 
-Este protótipo mantém os álbuns em estado local. Autenticação, persistência e sincronização em nuvem ainda não estão conectadas.
+## Integração com a API
+
+O app consome a API em `../Memento.backend` (rotas e regras no README de lá).
+
+- `src/services/api/` — infraestrutura: `client.ts` (fetch com Bearer, renova a sessão num 401 e repete a chamada), `sessao.ts` (tokens; o refresh token é **rotacionado**, então a renovação roda uma vez por vez), `token-storage.ts` (refresh token no `expo-secure-store`), `config.ts` (URL base) e `anexar-arquivo*.ts` (upload multipart).
+- `src/features/auth/` e `src/features/albums/` — `api/` (chamadas), `context/` (estado e regras).
+- Fotos ficam em container privado: use `ImagemAutenticada` (`components/ui/`), que envia o `Authorization` e usa o caminho do arquivo como `cacheKey`.
+- As rotas são protegidas em `app/_layout.tsx` (`Stack.Protected`): sem sessão só existem login e cadastro.
+- Link de convite: `memento://convite/{token}` (é o conteúdo do QR Code); abrir esse link fora do app cai em `app/convite/[token].tsx`.
+
+### URL da API
+
+Resolvida em `src/services/api/config.ts`: `EXPO_PUBLIC_API_URL` se definida; senão `localhost` (web e simulador iOS), `10.0.2.2` (emulador Android) ou o IP da máquina do Metro (celular físico).
+Em celular físico a API precisa escutar fora do loopback:
+
+```sh
+dotnet run --project src/Memento.Api --urls http://0.0.0.0:5077
+```
+
+Em build de produção defina `EXPO_PUBLIC_API_URL` com a URL HTTPS da API.

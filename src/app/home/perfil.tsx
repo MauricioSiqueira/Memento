@@ -1,7 +1,5 @@
 import { Feather } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import { router } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
@@ -13,11 +11,15 @@ import {
 } from "react-native";
 
 import { AccessibleText } from "@/components/ui/AccessibleText";
+import { ImagemAutenticada } from "@/components/ui/ImagemAutenticada";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { FolhaAcoes, type OpcaoFolhaAcoes } from "@/components/ui/FolhaAcoes";
 import { Input } from "@/components/ui/Input";
 import { usePreferences } from "@/contexts/preferences-context";
+import { useAuth } from "@/features/auth/context/auth-context";
+import { validarNomeUsuario } from "@/features/auth/utils/validacao";
+import { mensagemDeErro } from "@/services/api/erros";
 
 const COR_SAIR = "#E0637A";
 
@@ -31,9 +33,11 @@ const OPCOES_IMAGEM: ImagePicker.ImagePickerOptions = {
 };
 
 export default function TelaPersonalizacao() {
-  const [nome, setNome] = useState("Usuária Memento");
+  const { usuario, atualizarNomeUsuario, trocarFotoPerfil, removerFotoPerfil, sair } = useAuth();
+  const [nomeEdicao, setNomeEdicao] = useState("");
   const [editandoNome, setEditandoNome] = useState(false);
-  const [fotoPerfil, setFotoPerfil] = useState(AVATAR_PADRAO);
+  const [salvandoNome, setSalvandoNome] = useState(false);
+  const [enviandoFoto, setEnviandoFoto] = useState(false);
   const { temaEscuro, setTemaEscuro, textoMaior, setTextoMaior, modoDaltonico, setModoDaltonico } = usePreferences();
 
   const [folhaFotoVisivel, setFolhaFotoVisivel] = useState(false);
@@ -49,6 +53,46 @@ export default function TelaPersonalizacao() {
     );
   }
 
+  function aoEditarNome() {
+    setNomeEdicao(usuario?.nomeUsuario ?? "");
+    setEditandoNome(true);
+  }
+
+  async function aoSalvarNome() {
+    const novoNome = nomeEdicao.trim();
+    if (novoNome === usuario?.nomeUsuario) {
+      setEditandoNome(false);
+      return;
+    }
+
+    const erroValidacao = validarNomeUsuario(novoNome);
+    if (erroValidacao) {
+      Alert.alert("Nome de usuário inválido", erroValidacao);
+      return;
+    }
+
+    setSalvandoNome(true);
+    try {
+      await atualizarNomeUsuario(novoNome);
+      setEditandoNome(false);
+    } catch (erro) {
+      Alert.alert("Não foi possível salvar o nome", mensagemDeErro(erro));
+    } finally {
+      setSalvandoNome(false);
+    }
+  }
+
+  async function enviarFoto(foto: ImagePicker.ImagePickerAsset) {
+    setEnviandoFoto(true);
+    try {
+      await trocarFotoPerfil({ uri: foto.uri, nome: foto.fileName, tipo: foto.mimeType });
+    } catch (erro) {
+      Alert.alert("Não foi possível trocar a foto", mensagemDeErro(erro));
+    } finally {
+      setEnviandoFoto(false);
+    }
+  }
+
   async function aoEscolherDaGaleria() {
     const permissao = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissao.granted) {
@@ -58,7 +102,7 @@ export default function TelaPersonalizacao() {
 
     const resultado = await ImagePicker.launchImageLibraryAsync(OPCOES_IMAGEM);
     if (!resultado.canceled && resultado.assets[0]) {
-      setFotoPerfil(resultado.assets[0].uri);
+      await enviarFoto(resultado.assets[0]);
     }
   }
 
@@ -71,12 +115,20 @@ export default function TelaPersonalizacao() {
 
     const resultado = await ImagePicker.launchCameraAsync(OPCOES_IMAGEM);
     if (!resultado.canceled && resultado.assets[0]) {
-      setFotoPerfil(resultado.assets[0].uri);
+      await enviarFoto(resultado.assets[0]);
     }
   }
 
-  function aoDeletarFoto() {
-    setFotoPerfil(AVATAR_PADRAO);
+  async function aoDeletarFoto() {
+    if (!usuario?.fotoPerfilUrl) return;
+    setEnviandoFoto(true);
+    try {
+      await removerFotoPerfil();
+    } catch (erro) {
+      Alert.alert("Não foi possível remover a foto", mensagemDeErro(erro));
+    } finally {
+      setEnviandoFoto(false);
+    }
   }
 
   const opcoesFotoPerfil: OpcaoFolhaAcoes[] = [
@@ -107,7 +159,8 @@ export default function TelaPersonalizacao() {
       {
         text: "Sair",
         style: "destructive",
-        onPress: () => router.replace("/"),
+        // O layout raiz leva de volta ao login quando a sessão é encerrada.
+        onPress: () => void sair(),
       },
     ]);
   }
@@ -124,13 +177,15 @@ export default function TelaPersonalizacao() {
 
         <View className="mb-8 items-center">
           <View className="h-24 w-24">
-            <Image
-              source={fotoPerfil}
+            <ImagemAutenticada
+              url={usuario?.fotoPerfilUrl}
+              fonteAlternativa={AVATAR_PADRAO}
               style={{
                 width: 96,
                 height: 96,
                 borderRadius: 48,
                 backgroundColor: temaEscuro ? "#40383C" : "#EFEAE7",
+                opacity: enviandoFoto ? 0.5 : 1,
               }}
               contentFit="cover"
             />
@@ -148,24 +203,27 @@ export default function TelaPersonalizacao() {
           {editandoNome ? (
             <View className="mt-4 w-full max-w-xs flex-row items-center justify-center gap-3">
               <Input
-                value={nome}
-                onChangeText={setNome}
+                value={nomeEdicao}
+                onChangeText={setNomeEdicao}
                 autoFocus
+                autoCapitalize="none"
+                autoCorrect={false}
+                onSubmitEditing={aoSalvarNome}
                 containerStyle={{ flex: 1, marginBottom: 0 }}
               />
-              <TouchableOpacity onPress={() => setEditandoNome(false)}>
+              <TouchableOpacity onPress={aoSalvarNome} disabled={salvandoNome}>
               <AccessibleText className={`text-sm font-semibold ${modoDaltonico ? 'text-memento-accessible-accent' : 'text-memento-accent'}`}>
-                  Salvar
+                  {salvandoNome ? "Salvando..." : "Salvar"}
                 </AccessibleText>
               </TouchableOpacity>
             </View>
           ) : (
             <TouchableOpacity
               className="mt-4 flex-row items-center justify-center gap-2"
-              onPress={() => setEditandoNome(true)}
+              onPress={aoEditarNome}
             >
               <AccessibleText className="text-lg font-semibold text-memento-ink dark:text-memento-ink-dark">
-                {nome}
+                {usuario?.nomeUsuario}
               </AccessibleText>
               <Feather name="edit-2" size={14} color={temaEscuro ? "#C9BCB8" : "#8A7A75"} />
             </TouchableOpacity>

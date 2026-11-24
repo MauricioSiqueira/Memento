@@ -1,10 +1,10 @@
 import React from 'react';
 import { Pressable, TouchableOpacity, View } from 'react-native';
-import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { AccessibleText } from '@/components/ui/AccessibleText';
+import { ImagemAutenticada } from '@/components/ui/ImagemAutenticada';
 import type { Album } from '@/features/albums/context/albuns-context';
 
 interface AlbumCardProps {
@@ -15,7 +15,7 @@ interface AlbumCardProps {
 export function AlbumCard({ album, aoAlternarFavorito }: AlbumCardProps) {
   return (
     <Pressable className="relative aspect-[2/1] w-full overflow-hidden rounded-[20px] bg-memento-line dark:bg-memento-line-dark" onPress={() => router.push(`/album/${album.id}`)}>
-      <Image source={album.capa} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+      <ImagemAutenticada url={album.capa} style={{ width: '100%', height: '100%' }} contentFit="cover" />
 
       <TouchableOpacity
         className="absolute right-3 top-3 h-8 w-8 items-center justify-center rounded-full bg-[#4A3A35]/45"

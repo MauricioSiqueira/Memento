@@ -13,13 +13,56 @@ import { AccessibleText } from "@/components/ui/AccessibleText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { FormularioCadastro } from "@/features/auth/components/FormularioCadastro";
-import type { ValoresFormularioCadastro } from "@/features/auth/hooks/use-formulario-cadastro";
+import type {
+  CampoFormularioCadastro,
+  ErrosFormularioCadastro,
+  ValoresFormularioCadastro,
+} from "@/features/auth/hooks/use-formulario-cadastro";
+import { useAuth } from "@/features/auth/context/auth-context";
 import { usePreferences } from "@/contexts/preferences-context";
+import { ApiError, mensagemDeErro } from "@/services/api/erros";
+
+const CAMPOS_DO_FORMULARIO: CampoFormularioCadastro[] = [
+  "nomeUsuario",
+  "email",
+  "senha",
+  "confirmarSenha",
+  "dataNascimento",
+];
+
+/** "dd/mm/aaaa" (formato digitado) -> "aaaa-mm-dd" (formato da API). */
+function dataParaApi(dataTextual: string): string {
+  const [dia, mes, ano] = dataTextual.split("/");
+  return `${ano}-${mes}-${dia}`;
+}
 
 export default function TelaCriarConta() {
   const { temaEscuro } = usePreferences();
-  async function aoCadastrar(valores: ValoresFormularioCadastro) {
-    Alert.alert("Conta criada", `Bem-vindo(a), ${valores.nomeUsuario}!`, [
+  const { cadastrar } = useAuth();
+
+  async function aoCadastrar(valores: ValoresFormularioCadastro): Promise<ErrosFormularioCadastro | void> {
+    try {
+      await cadastrar({
+        nomeUsuario: valores.nomeUsuario.trim(),
+        email: valores.email.trim(),
+        senha: valores.senha,
+        confirmarSenha: valores.confirmarSenha,
+        dataNascimento: dataParaApi(valores.dataNascimento),
+      });
+    } catch (erro) {
+      // Erros de validação/conflito por campo aparecem no próprio campo.
+      if (erro instanceof ApiError && Object.keys(erro.campos).length > 0) {
+        const errosDosCampos: ErrosFormularioCadastro = {};
+        for (const campo of CAMPOS_DO_FORMULARIO) {
+          if (erro.campos[campo]) errosDosCampos[campo] = erro.campos[campo];
+        }
+        if (Object.keys(errosDosCampos).length > 0) return errosDosCampos;
+      }
+      Alert.alert("Não foi possível criar a conta", mensagemDeErro(erro));
+      return;
+    }
+
+    Alert.alert("Conta criada", `Bem-vindo(a), ${valores.nomeUsuario}! Agora é só entrar.`, [
       { text: "OK", onPress: () => router.replace("/") },
     ]);
   }

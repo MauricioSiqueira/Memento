@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Pressable, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Modal, Pressable, TouchableOpacity, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { Feather } from '@expo/vector-icons';
 
@@ -10,11 +10,14 @@ interface ModalQrCodeAlbumProps {
   visivel: boolean;
   aoFechar: () => void;
   nomeAlbum: string;
-  link: string;
+  /** Link de convite devolvido pela API; `null` enquanto carrega ou se falhou. */
+  link: string | null;
+  /** Mensagem exibida no lugar do QR Code quando o link não pôde ser obtido. */
+  erro?: string | null;
 }
 
 /** Modal centralizado com o QR Code do álbum, para outra pessoa escanear e entrar como colaboradora. */
-export function ModalQrCodeAlbum({ visivel, aoFechar, nomeAlbum, link }: ModalQrCodeAlbumProps) {
+export function ModalQrCodeAlbum({ visivel, aoFechar, nomeAlbum, link, erro }: ModalQrCodeAlbumProps) {
   const { temaEscuro } = usePreferences();
   return (
     <Modal visible={visivel} transparent animationType="fade" onRequestClose={aoFechar}>
@@ -31,8 +34,14 @@ export function ModalQrCodeAlbum({ visivel, aoFechar, nomeAlbum, link }: ModalQr
             Peça para a pessoa escanear este código para entrar no álbum.
           </AccessibleText>
 
-          <View className="rounded-2xl border border-memento-line bg-white p-4">
-            <QRCode value={link} size={200} color="#4A3A35" backgroundColor="#FFFFFF" />
+          <View className="h-[232px] w-[232px] items-center justify-center rounded-2xl border border-memento-line bg-white p-4">
+            {link ? (
+              <QRCode value={link} size={200} color="#4A3A35" backgroundColor="#FFFFFF" />
+            ) : erro ? (
+              <AccessibleText className="text-center text-sm text-[#8A7A75]">{erro}</AccessibleText>
+            ) : (
+              <ActivityIndicator color="#4A3A35" />
+            )}
           </View>
         </Pressable>
       </Pressable>

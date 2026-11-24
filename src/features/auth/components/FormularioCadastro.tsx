@@ -3,11 +3,15 @@ import { View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { useFormularioCadastro, ValoresFormularioCadastro } from '@/features/auth/hooks/use-formulario-cadastro';
+import {
+  useFormularioCadastro,
+  type ErrosFormularioCadastro,
+  type ValoresFormularioCadastro,
+} from '@/features/auth/hooks/use-formulario-cadastro';
 import { TAMANHO_MAXIMO_SENHA } from '@/features/auth/utils/validacao';
 
 interface FormularioCadastroProps {
-  aoCadastrar: (valores: ValoresFormularioCadastro) => void | Promise<void>;
+  aoCadastrar: (valores: ValoresFormularioCadastro) => void | ErrosFormularioCadastro | Promise<void | ErrosFormularioCadastro>;
 }
 
 export function FormularioCadastro({ aoCadastrar }: FormularioCadastroProps) {

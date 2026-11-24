@@ -9,14 +9,15 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 
 import { AccessibleText } from '@/components/ui/AccessibleText';
+import { ImagemAutenticada } from '@/components/ui/ImagemAutenticada';
+import type { Foto } from '@/features/albums/context/albuns-context';
 
 interface VisualizadorFotosProps {
   visivel: boolean;
-  fotos: string[];
+  fotos: Foto[];
   indiceInicial: number;
   aoFechar: () => void;
   aoRemover: (indice: number) => void;
@@ -43,7 +44,7 @@ export function VisualizadorFotos({ visivel, fotos, indiceInicial, aoFechar, aoR
         {visivel && (
           <FlatList
             data={fotos}
-            keyExtractor={(uri, indice) => `${uri}-${indice}`}
+            keyExtractor={(foto) => foto.arquivoId}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
@@ -55,8 +56,8 @@ export function VisualizadorFotos({ visivel, fotos, indiceInicial, aoFechar, aoR
             })}
             onMomentumScrollEnd={aoTerminarDeRolar}
             renderItem={({ item }) => (
-              <Image
-                source={item}
+              <ImagemAutenticada
+                url={item.url}
                 style={{ width: larguraTela, height: alturaTela }}
                 contentFit="contain"
               />

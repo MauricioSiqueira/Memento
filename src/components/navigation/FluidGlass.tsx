@@ -20,13 +20,14 @@ interface FluidGlassProps {
     index: number;
     routes: { key: string; name: string }[];
   };
-  navigation: {
+  emitter: {
     // A assinatura real do bottom-tabs é genérica sobre um mapa de eventos que o
     // expo-router não exporta publicamente; `any` aqui evita depender desse tipo interno
     // enquanto mantém o restante de `FluidGlassProps` (o que este componente realmente lê) tipado.
     emit(evento: any): any;
-    navigate(nomeRota: string): void;
   };
+  /** SDK 58: substitui o antigo `navigation.navigate(route.name)` na tab bar customizada. */
+  navigateToTab(chaveRota: string): void;
   insets: { bottom: number };
 }
 
@@ -41,7 +42,7 @@ const COR_ATIVA = '#4A3A35';
 const COR_INATIVA = '#B0A6A4';
 
 /** Barra de navegação inferior flutuante com efeito de vidro líquido (iOS 26+, com fallback nas demais plataformas). */
-export default function FluidGlass({ state, navigation, insets }: FluidGlassProps) {
+export default function FluidGlass({ state, emitter, navigateToTab, insets }: FluidGlassProps) {
   const vidroNativoDisponivel = Platform.OS === 'ios' && isLiquidGlassAvailable();
   const { temaEscuro, modoDaltonico } = usePreferences();
   const [folhaCriarVisivel, setFolhaCriarVisivel] = useState(false);
@@ -95,14 +96,14 @@ export default function FluidGlass({ state, navigation, insets }: FluidGlassProp
           }
 
           const aoPressionar = () => {
-            const evento = navigation.emit({
+            const evento = emitter.emit({
               type: 'tabPress',
               target: route.key,
               canPreventDefault: true,
             });
 
             if (!emFoco && !evento.defaultPrevented) {
-              navigation.navigate(route.name);
+              navigateToTab(route.key);
             }
           };
 

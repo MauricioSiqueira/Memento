@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AccessibleText } from '@/components/ui/AccessibleText';
 import { useAlbuns } from '@/features/albums/context/albuns-context';
+import { ApiError, mensagemDeErro } from '@/services/api/erros';
 
 export default function TelaScanner() {
   const [permissao, solicitarPermissao] = useCameraPermissions();
@@ -14,7 +15,7 @@ export default function TelaScanner() {
   const tentouSolicitarPermissao = useRef(false);
   const focada = useIsFocused();
   const insets = useSafeAreaInsets();
-  const { albuns } = useAlbuns();
+  const { entrarPorLink } = useAlbuns();
 
   useEffect(() => {
     if (permissao && !permissao.granted && permissao.canAskAgain && !tentouSolicitarPermissao.current) {
@@ -23,29 +24,29 @@ export default function TelaScanner() {
     }
   }, [permissao, solicitarPermissao]);
 
-  const aoLerQrCode = useCallback((resultado: BarcodeScanningResult) => {
-    if (qrLido) return;
-    setQrLido(true);
+  const aoLerQrCode = useCallback(
+    async (resultado: BarcodeScanningResult) => {
+      if (qrLido) return;
+      setQrLido(true);
 
-    const idAlbum = resultado.data.match(/(?:memento:\/\/album\/|\/album\/)([^/?#]+)/)?.[1];
-    const album = albuns.find((item) => item.id === idAlbum);
-
-    if (album) {
-      Alert.alert('Álbum encontrado', `Deseja abrir “${album.nome}”?`, [
-        { text: 'Continuar escaneando', onPress: () => setQrLido(false) },
-        { text: 'Abrir álbum', onPress: () => router.replace(`/album/${album.id}`) },
-      ]);
-      return;
-    }
-
-    Alert.alert(
-      idAlbum ? 'Álbum indisponível' : 'QR Code não reconhecido',
-      idAlbum
-        ? 'Este álbum ainda não está disponível neste dispositivo.'
-        : 'Aponte a câmera para o QR Code de compartilhamento de um álbum do Memento.',
-      [{ text: 'Tentar novamente', onPress: () => setQrLido(false) }]
-    );
-  }, [albuns, qrLido]);
+      try {
+        // O QR contém o link de convite (memento://convite/{token}); a API valida e adiciona o usuário.
+        const album = await entrarPorLink(resultado.data);
+        router.replace(`/album/${album.id}`);
+      } catch (erro) {
+        // 400/404: o QR não é um convite válido do Memento (ou foi invalidado pelo dono).
+        const qrInvalido = erro instanceof ApiError && (erro.status === 400 || erro.status === 404);
+        Alert.alert(
+          qrInvalido ? 'QR Code não reconhecido' : 'Não foi possível entrar no álbum',
+          qrInvalido
+            ? 'Aponte a câmera para o QR Code de compartilhamento de um álbum do Memento.'
+            : mensagemDeErro(erro),
+          [{ text: 'Tentar novamente', onPress: () => setQrLido(false) }]
+        );
+      }
+    },
+    [entrarPorLink, qrLido]
+  );
 
   if (!permissao) {
     return <View className="flex-1 items-center justify-center bg-black" />;

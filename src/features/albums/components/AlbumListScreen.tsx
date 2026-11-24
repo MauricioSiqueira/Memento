@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, type ScrollViewInstance, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +15,10 @@ interface AlbumListScreenProps {
   onToggleFavorite: (id: string) => void;
   emptyMessage?: string;
   onAddAlbum?: () => void;
+  /** Mensagem de erro do carregamento, exibida no lugar da lista vazia. */
+  error?: string | null;
+  refreshing?: boolean;
+  onRefresh?: () => void;
 }
 
 export function AlbumListScreen({
@@ -23,9 +27,12 @@ export function AlbumListScreen({
   onToggleFavorite,
   emptyMessage,
   onAddAlbum,
+  error,
+  refreshing = false,
+  onRefresh,
 }: AlbumListScreenProps) {
   const { modoDaltonico } = usePreferences();
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -40,6 +47,7 @@ export function AlbumListScreen({
         className="flex-1"
         contentContainerClassName="items-center px-6 pb-36 pt-6"
         showsVerticalScrollIndicator={false}
+        refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> : undefined}
       >
         <AccessibleText className="mb-5 self-start text-[22px] font-bold text-memento-ink dark:text-memento-ink-dark">{title}</AccessibleText>
 
@@ -49,7 +57,16 @@ export function AlbumListScreen({
               <AlbumCard key={album.id} album={album} aoAlternarFavorito={onToggleFavorite} />
             ))}
           </View>
-        ) : (
+        ) : error ? (
+          <View className="mt-10 items-center gap-3">
+            <AccessibleText className="text-center text-sm text-memento-muted dark:text-memento-muted-dark">{error}</AccessibleText>
+            {onRefresh && (
+              <TouchableOpacity onPress={onRefresh} accessibilityRole="button">
+                <AccessibleText className="text-sm font-semibold text-sky-500">Tentar novamente</AccessibleText>
+              </TouchableOpacity>
+            )}
+          </View>
+        ) : refreshing ? null : (
           <AccessibleText className="mt-10 text-center text-sm text-memento-muted dark:text-memento-muted-dark">{emptyMessage}</AccessibleText>
         )}
 
